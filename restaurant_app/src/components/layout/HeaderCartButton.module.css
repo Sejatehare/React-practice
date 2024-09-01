@@ -4,12 +4,13 @@
     border: none;
     background-color: #4d1601;
     color: white;
-    padding: 0.75rem 3rem;
+    padding: 0.75rem 2rem;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
     border-radius: 25px;
     font-weight: bold;
+    margin: 0 auto;
   }
   
   .button:hover,
@@ -19,7 +20,7 @@
   
   .icon {
     width: 1.35rem;
-    height: 1.35rem;
+    height: 0.35rem;
     margin-right: 0.5rem;
   }
   
