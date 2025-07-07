@@ -36,29 +36,41 @@ const CartProvider = props => {
     const addMedItems = newItem => {
         const existingItem = cart.find((item) => item.name === newItem.name);
         const menuItem = menuItems.find(item => item.name === newItem.name);
+
+        if (menuItem.avail <= 0) {
+            alert("Oops! Out of stock.");
+            return;
+        }
+
+        const updatedMenuItems = menuItems.map(item => 
+            item.name === newItem.name ? {...item, avail: item.avail - 1 } : item
+        );
+
+        setMenuItems(updatedMenuItems);
+
         if (existingItem) {
-            if (existingItem.quantity < Number(menuItem.avail)){
-                const updatedCart = cart.map((item) =>
-                item.name === newItem.name ? {...item, quantity: item.quantity + 1 } : item
+            const updatedCart = cart.map((item) =>
+                item.name === newItem.name ? { ...item, quantity: item.quantity + 1 } : item
             );
             setCart(updatedCart);
-            }
-            else{
-                alert("No stock available!");
-            }
-        }
-        else{
-            if (Number(menuItem.avail) > 0){
-                setCart((prevCart) => [...prevCart, {...newItem, quantity: 1 }]);
-            }
-            else{
-                alert("Ooppps!!!out of stock!");
-            }
+        } else {
+            setCart((prevCart) => [...prevCart, { ...newItem, quantity: 1 }]);
         }
     };
+    
 
     const removeMedItems = (deletingItem) => {
         const existingItem = cart.find(item => item.name === deletingItem.name);
+
+        if (!existingItem) return;
+
+        const updatedMenuItems = menuItems.map(item =>
+            item.name === deletingItem.name
+                ? { ...item, avail: Number(item.avail) + 1 }
+                : item
+        );
+        setMenuItems(updatedMenuItems);
+
         if (existingItem.quantity === 1) {
             const updatedCart = cart.filter(item => item.name !== deletingItem.name);
             setCart(updatedCart);
