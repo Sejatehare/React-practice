@@ -1,12 +1,20 @@
 import CartButton from "./CartButton"
-import MedicineForm from "./MedicineForm"
+import React from "react";
+import "../styles/Header.css";
+import "./MedicineForm"
+import MedicineForm from "./MedicineForm";
 
 const Header = (props) => {
     return(
-        <Header>
-            <MedicineForm></MedicineForm>
-            <CartButton></CartButton>
-        </Header>
+        <>
+            <div className="Header">
+                <div className="HD1">
+                    <h1 className="H1">Medicine Shop</h1>
+                    <CartButton Click={props.onShowCart} />
+                </div>
+                <MedicineForm/>
+            </div>
+        </>
     );
 }
 

@@ -1,0 +1,107 @@
+.Container{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.788);
+}
+.Cart-Box{
+    position: fixed;
+    background: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    height: 370px;
+    padding: 10px;
+    border-radius: 10px;
+}
+.Cart-Array{
+    height: 200px;
+    margin: 10px;
+    padding: 5px;
+    background-color: rgb(115, 174, 108);
+    overflow: scroll;
+    border-radius: 10px;
+}
+.Cart-Array::-webkit-scrollbar{display: none;}
+.CartItem{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 10px;
+    background: rgb(169, 233, 255);
+    border-radius: 10px;
+}
+.TotalAmount{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 10px;
+    padding: 5px;
+    background: rgb(148, 90, 219);
+    border-radius: 10px;
+    font-weight: 400;
+    color: white;
+}
+.TA{
+    font-size: 20px;
+}
+.Cart-Btns{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 10px;
+}
+.BTN{
+    width: 80px;
+    height: 30px;
+    padding: 3px;
+    margin: 10px;
+    border-radius: 10px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-weight: bold;
+}
+.BTN1{
+    width: 40px;
+    height: 30px;
+    padding: 3px;
+    margin: 10px;
+    border-radius: 10px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-weight: bold;
+}
+.MAX{
+    background: rgb(104, 80, 70);
+}
+.MIN{
+    background: rgb(221, 118, 237);
+}
+.CNCL{
+    background: rgb(236, 128, 128);
+}
+.ORDR{
+    background: rgb(133, 133, 238);
+}
+
+@media screen and (max-width: 768px){
+    .Cart-Box{
+        width: 70vw;
+    }
+    .CartItem{
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 5px;
+    }
+    .TA{
+        font-size: 14px;
+    }
+}
