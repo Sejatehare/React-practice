@@ -1,6 +1,6 @@
 import CartItem from "./CartItem";
 
-const Cart = ({showCartHandler}) => {
+const Cart = ({ showCartHandler }) => {
     return (
         <section
         id="cart"
