@@ -1,41 +1,26 @@
+import { useContext } from "react";
+import CartContext from "../Context/CartContext";
+
 const CartItem = () => {
-    const cartElements = [
-        {
-        title: "Colors",
-        price: 100,
-        imageUrl:
-            "https://prasadyash2411.github.io/ecom-website/img/Album%201.png",
-        quantity: 2,
-        },
-        {
-        title: "Black and white Colors",
-        price: 50,
-        imageUrl:
-            "https://prasadyash2411.github.io/ecom-website/img/Album%202.png",
-        quantity: 3,
-        },
-        {
-        title: "Yellow and Black Colors",
-        price: 70,
-        imageUrl:
-            "https://prasadyash2411.github.io/ecom-website/img/Album%203.png",
-        quantity: 1,
-        },
-    ];
+    const cartCtx = useContext(CartContext);
+    
+    const removeItemFromCart = (id) => {
+        cartCtx.removeItem(id);
+    };
 
     return (
         <>
-            {cartElements.map((item) => (
+            {cartCtx.items.map((item) => (
                 <div className="cart-items" key={item.id}>
-                <div className="cart-item-name">
-                    <img src={item.imageUrl} alt=""></img>
-                    <span className="title">{item.title}</span>
-                </div>
-                <div className="cart-items-price">{item.price}</div>
-                <div className="cart-items-quantity">
-                    <input type="number" value={item.quantity}></input>
-                    <button onClick={() => {}}>Remove</button>
-                </div>
+                    <div className="cart-item-name">
+                        <img src={item.imageUrl} alt=""></img>
+                        <span className="title">{item.title}</span>
+                    </div>
+                    <div className="cart-items-price">${item.price}</div>
+                    <div className="cart-items-quantity">
+                        <input type="number" value={item.quantity} readOnly></input>
+                        <button onClick={() => {removeItemFromCart(item.id)}}>Remove</button>
+                    </div>
                 </div>
             ))}
         </>

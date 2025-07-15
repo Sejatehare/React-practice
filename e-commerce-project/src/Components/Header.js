@@ -1,12 +1,21 @@
 import { useState } from "react";
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import Cart from "./Cart/Cart";
+import CartContext from "./Context/CartContext";
+import { useContext } from "react";
 
 const Header = () => {
     const [showCart, setShowCart] = useState(false);
     const showCartHandler = () => {
         setShowCart(!showCart)
     }
+
+    const cartCtx = useContext(CartContext);
+    
+    let totalAmount = 0;
+    cartCtx.items.map((item) => (
+        totalAmount += item.quantity
+    ))
 
     return (
         <header>
@@ -22,6 +31,7 @@ const Header = () => {
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
+                <Button onClick={showCartHandler}>Cart ({totalAmount})</Button>
             </Navbar> 
             {showCart && <Cart showCartHandler={showCartHandler}></Cart>}
         </header>
