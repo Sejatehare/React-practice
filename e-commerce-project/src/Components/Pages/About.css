@@ -1,7 +1,7 @@
 #about {
   max-width: 900px;
   margin: 0 auto;
-  font-size: 22px;
+  font-size: 23px;
 }
 
 #about img {
@@ -15,13 +15,13 @@
 section h2 {
   font-family: "Metal Mania";
   text-align: center;
-  padding: 20px;
+  padding: 10px;
   font-size: 30px;
 }
 
 #about p {
   font-size: 17px;
-  margin: 20px;
+  margin: 10px;
   color: #777;
   text-align: justify;
 }
