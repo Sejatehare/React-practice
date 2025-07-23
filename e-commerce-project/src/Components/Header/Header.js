@@ -5,6 +5,7 @@ import CartContext from "../Context/CartContext";
 import { useContext } from "react";
 import './Header.css';
 import {Link} from 'react-router-dom';
+import AuthContext from "../Context/AuthContext";
 
 const Header = () => {
     const [showCart, setShowCart] = useState(false);
@@ -13,6 +14,7 @@ const Header = () => {
     }
 
     const cartCtx = useContext(CartContext);
+    const authCtx = useContext(AuthContext);
     
     let totalAmount = 0;
     cartCtx.items.map((item) => (
@@ -25,9 +27,11 @@ const Header = () => {
                 <div className="links">
                     <Link to="/">Home</Link>
                 </div>
-                <div className="links">
-                    <Link to="/store">Store</Link>
-                </div>
+                {authCtx.isLoggedIn && (
+                    <div className="links">
+                        <Link to="/store">Store</Link>
+                    </div>
+                )}
                 <div className="links">
                     <Link to="/about">About</Link>
                 </div>
