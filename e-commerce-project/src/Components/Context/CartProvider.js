@@ -1,49 +1,138 @@
-import React, { useState } from "react";
-import CartContext from "./CartContext";                     
+import React, { useState, useEffect } from "react";
+import CartContext from "./CartContext";
 
 const CartProvider = (props) => {
-    const [items, setItems] = useState([]);
+  let URL = "https://crudcrud.com/api/103a162eabb5428e8f33b3b1e1a4281b/";
+  let email = localStorage.getItem("email");
 
-    const addItemToCartHandler = (item) => {
-        const updateItem = [...items];
-        const existingItem = updateItem.find((cartItem) => cartItem.id === item.id);
+  const [items, setItems] = useState([]);
 
-        if (existingItem) {
-           existingItem.quantity = Number(existingItem.quantity) + Number(item.quantity);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${URL}${email}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setItems(data);
         } else {
-            updateItem.push(item);
+          console.log("Failed to fetch cart data");
         }
-        setItems(updateItem)
-    }
-
-    const removeItemFromCartHandler = (id) => {
-        const existingItemIndex = items.findIndex((item) => item.id === id);
-
-        if (existingItemIndex !== -1){
-            const updateItem = [...items];
-            const existingItem = updateItem[existingItemIndex];
-
-            if (existingItem.quantity > 1) {
-                existingItem.quantity -= 1;
-            } else {
-                 updateItem.splice(existingItemIndex, 1);
-            }
-            setItems(updateItem)
-        }
-    }
-
-    const cartContext ={
-        items: items,
-        addItem: addItemToCartHandler,
-        removeItem: removeItemFromCartHandler,
-        totalAmount: 0,
+      } catch (error) {
+        console.error("Error fetching cart data:", error);
+      }
     };
 
-    return (
-        <CartContext.Provider value={cartContext}>
-            {props.children}
-        </CartContext.Provider>
+    fetchData();
+  }, []);
+
+  const addItemToCartHandler = async (item, email) => {
+    let updateItem;
+
+    try {
+      const response = await fetch(`${URL}${email}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      updateItem = data;
+    } catch (error) {
+      console.log(error);
+    }
+
+    let existingItem = updateItem.find(
+      (cartItem) => Number(cartItem.items.id) === Number(item.id)
     );
+
+    if (existingItem) {
+      existingItem.items.quantity =
+        Number(existingItem.items.quantity) + Number(item.quantity);
+
+      await fetch(`${URL}${email}/${existingItem._id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          items: existingItem.items,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } else {
+      // If the item doesn't exist, add it to the cart with a POST request
+      await fetch(`${URL}${email}`, {
+        method: "POST",
+        body: JSON.stringify({
+          items: item,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
+    setItems(updateItem);
+  };
+
+  const removeItemFromCartHandler = async (id) => {
+    let updatedItem;
+    try {
+      const response = await fetch(`${URL}${email}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      updatedItem = data;
+    } catch (error) {
+      console.log(error);
+    }
+
+    let existingItem = updatedItem.find((cartItem) => cartItem._id === id);
+
+    if (Number(existingItem.items.quantity) > 1) {
+      existingItem.items.quantity = Number(existingItem.items.quantity) - 1;
+
+      await fetch(`${URL}${email}/${existingItem._id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          items: existingItem.items,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } else {
+      updatedItem = items.filter((item) => item.id !== id);
+
+      await fetch(`${URL}${email}/${existingItem._id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
+    setItems(updatedItem);
+  };
+
+  const cartContext = {
+    items: items,
+    addItem: addItemToCartHandler,
+    removeItem: removeItemFromCartHandler,
+    totalAmount: 0,
+  };
+
+  return (
+    <CartContext.Provider value={cartContext}>
+      {props.children}
+    </CartContext.Provider>
+  );
 };
 
 export default CartProvider;

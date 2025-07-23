@@ -1,48 +1,66 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import Cart from "../Cart/Cart";
 import CartContext from "../Context/CartContext";
-import { useContext } from "react";
-import './Header.css';
-import {Link} from 'react-router-dom';
 import AuthContext from "../Context/AuthContext";
+import "./Header.css";
 
 const Header = () => {
-    const [showCart, setShowCart] = useState(false);
-    const showCartHandler = () => {
-        setShowCart(!showCart)
-    }
+  const [showCart, setShowCart] = useState(false);
 
-    const cartCtx = useContext(CartContext);
-    const authCtx = useContext(AuthContext);
-    
-    let totalAmount = 0;
-    cartCtx.items.map((item) => (
-        totalAmount += item.quantity
-    ))
+  const logoutHandler = () => {
+    authCtx.logout();
+  };
 
-    return (
-        <div className="navbar">
-            <header className="header">
-                <div className="links">
-                    <Link to="/">Home</Link>
-                </div>
-                {authCtx.isLoggedIn && (
-                    <div className="links">
-                        <Link to="/store">Store</Link>
-                    </div>
-                )}
-                <div className="links">
-                    <Link to="/about">About</Link>
-                </div>
+  const showCartHandler = () => {
+    setShowCart(!showCart);
+  };
 
-                <Button className="cart-holder" onClick={showCartHandler}>Cart ({totalAmount})</Button>
+  const cartCtx = useContext(CartContext);
+  const authCtx = useContext(AuthContext);
 
-                {showCart && <Cart showCartHandler={showCartHandler}></Cart>}
-            </header>
-            <h1>The Generics</h1>
+  let totalAmount = 0;
+  cartCtx.items.map((item) => (totalAmount += item.items.quantity));
+
+  return (
+    <div className="navbar">
+      <header className="header">
+        <div className="links">
+          <Link to="/">Home</Link>
         </div>
-    );
-}
+        <div className="links">
+          <Link to="/store">Store</Link>
+        </div>
+        <div className="links">
+          <Link to="/about">About</Link>
+        </div>
+        {!authCtx.isLoggedIn && (
+          <div className="links">
+            <Link to="/login">Login</Link>
+          </div>
+        )}
+        <div className="links">
+          <Link to="/contact-us">Contact Us</Link>
+        </div>
+        {authCtx.isLoggedIn && (
+          <div className="links">
+            <Link to="/" onClick={logoutHandler}>
+              Logout
+            </Link>
+          </div>
+        )}
+        {authCtx.isLoggedIn && (
+          <Button className="cart-holder" onClick={showCartHandler}>
+            Cart ({totalAmount})
+          </Button>
+        )}
+
+        {showCart && <Cart showCartHandler={showCartHandler}></Cart>}
+      </header>
+      <h1>The Generics</h1>
+    </div>
+  );
+};
 
 export default Header;
