@@ -1,4 +1,4 @@
-import { useRef, useContext } from "react";
+import { useRef, useContext, useEffect } from "react";
 
 import AuthContext from "../../Store/AuthContext";
 import classes from "./ProfileForm.module.css";
@@ -9,6 +9,32 @@ const ProfileForm = () => {
   const profileUrlInputRef = useRef();
   const authCtx = useContext(AuthContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch(
+      "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAl2_-4qrH9gTXCHoxpWVKvUtpgfgrcVTo",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          idToken: authCtx.token,
+        }),
+      }
+    )
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        const userData = data.users[0];
+        fullNameInputRef.current.value = userData.displayName;
+        profileUrlInputRef.current.value = userData.photoUrl;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const cancelHandler = () => {
     navigate("/");
@@ -21,7 +47,7 @@ const ProfileForm = () => {
     const enteredPhotoURL = profileUrlInputRef.current.value;
 
     fetch(
-      "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyCprTZVW6b9fM51Dp_WL5C-T5yTGXa7t9s",
+      "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyAl2_-4qrH9gTXCHoxpWVKvUtpgfgrcVTo",
       {
         method: "POST",
         headers: {
@@ -37,11 +63,9 @@ const ProfileForm = () => {
     )
       .then((response) => response.json())
       .then((data) => {
-        //Handle the successful response here
         console.log(data);
       })
       .catch((error) => {
-        // Handle any errors here
         console.error(error);
       });
     fullNameInputRef.current.value = "";
@@ -56,7 +80,7 @@ const ProfileForm = () => {
           <input type="text" id="full-name" ref={fullNameInputRef} required />
         </div>
         <div className={classes.control}>
-          <label htmlFor="photot-url">Profile Photot URL</label>
+          <label htmlFor="photot-url">Profile Photo URL</label>
           <input
             type="text"
             id="photot-url"
