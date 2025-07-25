@@ -26,7 +26,6 @@ const ProfileForm = () => {
         },
       }
     ).then((res) => {
-      //assumption: Always succeeds
     });
   };
 
