@@ -15,7 +15,7 @@ const AppRoutes = () => {
         <Route path="/" element={<HomePage />} />
         {!authCtx.isLoggedIn && <Route path="/auth" element={<AuthPage />} />}
         {authCtx.isLoggedIn && <Route path="/profile" element={<UserProfile />} />}
-        <Route path="*" element={<HomePage />} /> {/* Fallback */}
+        <Route path="*" element={<HomePage />} />
       </Routes>
     </Layout>
   );
