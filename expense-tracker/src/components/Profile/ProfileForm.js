@@ -1,8 +1,7 @@
 import { useRef, useContext, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 import AuthContext from "../../Store/AuthContext";
 import classes from "./ProfileForm.module.css";
-import { useNavigate } from "react-router-dom";
 
 const ProfileForm = () => {
   const fullNameInputRef = useRef();
@@ -23,18 +22,16 @@ const ProfileForm = () => {
         }),
       }
     )
-      .then((res) => {
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
         const userData = data.users[0];
-        fullNameInputRef.current.value = userData.displayName;
-        profileUrlInputRef.current.value = userData.photoUrl;
+        fullNameInputRef.current.value = userData.displayName || "";
+        profileUrlInputRef.current.value = userData.photoUrl || "";
       })
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [authCtx.token]);
 
   const cancelHandler = () => {
     navigate("/");
@@ -63,11 +60,14 @@ const ProfileForm = () => {
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        console.log("Profile updated:", data);
+        localStorage.setItem("profileCompleted", "true");
+        navigate("/");
       })
       .catch((error) => {
-        console.error(error);
+        console.error("Profile update failed:", error);
       });
+
     fullNameInputRef.current.value = "";
     profileUrlInputRef.current.value = "";
   };
@@ -80,10 +80,10 @@ const ProfileForm = () => {
           <input type="text" id="full-name" ref={fullNameInputRef} required />
         </div>
         <div className={classes.control}>
-          <label htmlFor="photot-url">Profile Photo URL</label>
+          <label htmlFor="photo-url">Profile Photo URL</label>
           <input
             type="text"
-            id="photot-url"
+            id="photo-url"
             ref={profileUrlInputRef}
             required
           />

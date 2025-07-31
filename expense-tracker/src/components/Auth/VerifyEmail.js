@@ -7,7 +7,12 @@ const VerifyEmail = () => {
   const authCtx = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const VerifyEmailHandler = () => {
+  const verifyEmailHandler = () => {
+    if (!authCtx.token) {
+      alert("You must be logged in to verify your email.");
+      return;
+    }
+
     fetch(
       "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyAl2_-4qrH9gTXCHoxpWVKvUtpgfgrcVTo",
       {
@@ -22,21 +27,27 @@ const VerifyEmail = () => {
       }
     )
       .then((res) => {
-        return res.json();
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error("Failed to send verification email.");
+        }
       })
       .then((data) => {
-        console.log(data);
-        alert("Verification link sent to your email");
-        navigate("/");
+        console.log("Verification email sent", data);
+        alert("Verification link has been sent to your email.");
+        navigate("/"); 
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Verification error:", error);
+        alert("Error: " + error.message);
       });
   };
 
   return (
     <div className="verify-email">
-      <button onClick={VerifyEmailHandler}>Verify Email</button>
+      <h2>Please verify your email</h2>
+      <button onClick={verifyEmailHandler}>Send Verification Email</button>
     </div>
   );
 };

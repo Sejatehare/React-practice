@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthContextProvider } from "./Store/AuthContext";
 import { ExpenseContextProvider } from "./Store/ExpenseContext";
 import AppRoutes from "./AppRoutes";
+import "./App.css";
 
 function AppContent() {
   const isDarkMode = useSelector((state) => state.theme.isDark);

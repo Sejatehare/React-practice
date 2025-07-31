@@ -12,24 +12,28 @@ const HomePage = () => {
     navigate("./profile");
   };
 
+  const profileCompleted = localStorage.getItem("profileCompleted") === "true";
+
   return (
-      <>
-        {authCtx.isLoggedIn ? (
-          <div>
-            <section className={classes.starting}>
-              <p>Welcome to Expense Tracker!!!</p>
-              <div className="classes.profile">
+    <>
+      {authCtx.isLoggedIn ? (
+        <div>
+          <section className={classes.starting}>
+            <p>Welcome to Expense Tracker!!!</p>
+            {!profileCompleted && (
+              <div className={classes.profile}>
                 <p>Your profile is incomplete.</p>
                 <button onClick={profileHandler}>Complete Now</button>
               </div>
-            </section>
-            <ExpenseTracker />
-          </div>
-        ) : (
-          <h1>Welcome to Expense Tracker!!!</h1>
-        )}
-      </>
-    );
+            )}
+          </section>
+          <ExpenseTracker />
+        </div>
+      ) : (
+        <h1>Welcome to Expense Tracker!!!</h1>
+      )}
+    </>
+  );
 };
 
 export default HomePage;

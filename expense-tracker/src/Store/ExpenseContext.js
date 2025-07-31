@@ -1,160 +1,76 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useDispatch } from "react-redux";
+import AuthContext from "./AuthContext";
 import { expenseActions } from "./expense-slice";
 
-const ExpenseContext = React.createContext({
-  expenses: [],
-  fetchExpense: () => {},
-  addExpense: (expense) => {},
-  updateExpense: (expense) => {},
-  removeExpense: (expense) => {},
-});
+const ExpenseContext = React.createContext();
 
 export const ExpenseContextProvider = (props) => {
   const [expenseItems, setExpenseItems] = useState([]);
-
-  //redux dispatch
   const dispatch = useDispatch();
+  const authCtx = useContext(AuthContext);
 
-  let userEmail = localStorage.getItem("email");
-  if (userEmail) {
-    userEmail = userEmail.replace(/[^a-zA-Z0-9]/g, "");
-  }
+  const userId = (authCtx.userId || "").replace(/[^a-zA-Z0-9]/g, "");
+  const api = "https://expense-tracker-3817d-default-rtdb.firebaseio.com";
 
-  const api = "https://expense-tracker-cea1f-default-rtdb.firebaseio.com/";
-
-  const fetchExpenseHandler = async () => {
-    if (userEmail) {
-      const url = `${api}/expenses${userEmail}.json`;
-
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error("Failed to fetch expense data");
-        }
-        const data = await response.json();
-
-        const expenseList = Object.keys(data).map((expenseId) => {
-          const expense = data[expenseId];
-          return {
-            id: expenseId,
-            category: expense.category,
-            description: expense.description,
-            moneySpent: expense.moneySpent,
-          };
-        });
-        //dispatch actions
-        dispatch(expenseActions.setItems(expenseList));
-
-        setExpenseItems(expenseList);
-      } catch (error) {
-        console.log(error);
-      }
+  const fetchExpense = async () => {
+    if (!userId) return;
+    try {
+      const res = await fetch(`${api}/expenses/${userId}.json`);
+      const data = await res.json();
+      const list = data
+        ? Object.entries(data).map(([id, val]) => ({ id, ...val }))
+        : [];
+      setExpenseItems(list);
+      dispatch(expenseActions.setItems(list));
+    } catch (err) {
+      console.error("Fetching failed", err);
     }
   };
 
-  const addExpenseHandler = (item) => {
-    if (userEmail) {
-      const url = `${api}/expenses${userEmail}.json`;
-      fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(item),
-      })
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            console.log("Error adding/updating item");
-          }
-        })
-        .then((data) => {
-          // adding id value in item and then adding the item to expenseItems
-          item = { ...item, id: data.name };
-          setExpenseItems([...expenseItems, item]);
-
-          //dispatch actions
-          dispatch(expenseActions.addItem(item));
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+  const addExpense = async (item) => {
+    if (!userId) return;
+    const res = await fetch(`${api}/expenses/${userId}.json`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(item),
+    });
+    const data = await res.json();
+    const newItem = { ...item, id: data.name };
+    setExpenseItems((prev) => [...prev, newItem]);
+    dispatch(expenseActions.addItem(newItem));
   };
 
-  const updateExpenseHandler = (updatedExpense) => {
-    if (userEmail) {
-      const url = `${api}/expenses${userEmail}/${updatedExpense.id}.json`;
-      fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedExpense),
-      })
-        .then((response) => {
-          if (response.ok) {
-            console.log("Expense Updated");
-            //update expense from expenseItems
-            setExpenseItems((prevExpenseItems) =>
-              prevExpenseItems.map((expense) =>
-                expense.id === updatedExpense.id ? updatedExpense : expense
-              )
-            );
-
-            //dispatch actions
-            dispatch(expenseActions.editItem({ item: updatedExpense }));
-          } else {
-            console.error("error while updating item");
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
+  const updateExpense = async (item) => {
+    if (!userId) return;
+    await fetch(`${api}/expenses/${userId}/${item.id}.json`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(item),
+    });
+    setExpenseItems((prev) => prev.map((e) => (e.id === item.id ? item : e)));
+    dispatch(expenseActions.editItem({ item }));
   };
 
-  const removeExpenseHandler = (expenseId) => {
-    if (userEmail) {
-      const url = `${api}/expenses${userEmail}/${expenseId}.json`;
-      fetch(url, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => {
-          if (response.ok) {
-            console.log("Expense successfuly deleted");
-            //remove expense from expenseItems
-            setExpenseItems((prevExpenseItems) =>
-              prevExpenseItems.filter((expense) => expense.id !== expenseId)
-            );
-
-            //dispatch actions
-            dispatch(expenseActions.removeItem({ id: expenseId }));
-          } else {
-            console.error("error while deleting item");
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  };
-
-  const expenseContext = {
-    expenses: expenseItems,
-    fetchExpense: fetchExpenseHandler,
-    addExpense: addExpenseHandler,
-    updateExpense: updateExpenseHandler,
-    removeExpense: removeExpenseHandler,
+  const removeExpense = async (id) => {
+    if (!userId) return;
+    await fetch(`${api}/expenses/${userId}/${id}.json`, {
+      method: "DELETE",
+    });
+    setExpenseItems((prev) => prev.filter((e) => e.id !== id));
+    dispatch(expenseActions.removeItem({ id }));
   };
 
   return (
-    <ExpenseContext.Provider value={expenseContext}>
+    <ExpenseContext.Provider
+      value={{
+        expenses: expenseItems,
+        fetchExpense,
+        addExpense,
+        updateExpense,
+        removeExpense,
+      }}
+    >
       {props.children}
     </ExpenseContext.Provider>
   );

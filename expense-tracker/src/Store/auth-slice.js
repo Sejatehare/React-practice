@@ -1,44 +1,37 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialAuthState = {
-  token: localStorage.getItem("token"),
-  email: localStorage.getItem("email"),
-  isPremium: localStorage.getItem("isPremium"),
-  isLoggedIn: localStorage.getItem("isloggedIn"),
+  token: null,
+  email: null,
+  userId: null,
+  isLoggedIn: false,
+  isPremium: false,
 };
 
 const authSlice = createSlice({
-  name: "authentication",
+  name: "auth",
   initialState: initialAuthState,
   reducers: {
     login(state, action) {
-      console.log(action.payload.email);
-
       state.token = action.payload.token;
       state.email = action.payload.email;
-      localStorage.setItem("token", action.payload.token);
-      localStorage.setItem("email", action.payload.email);
+      state.userId = action.payload.userId;
       state.isLoggedIn = true;
-      localStorage.setItem("isLoggedIn", true);
+      localStorage.setItem("userId", action.payload.userId);
     },
-
     logout(state) {
       state.token = null;
       state.email = null;
-      localStorage.removeItem("token");
-      localStorage.removeItem("email");
-      state.isPremium = false;
+      state.userId = null;
       state.isLoggedIn = false;
-      localStorage.removeItem("isPremium");
-      localStorage.removeItem("isLoggedIn");
+      state.isPremium = false;
+      localStorage.removeItem("userId");
     },
-
-    setIsPremium(state) {
+    activatePremium(state) {
       state.isPremium = true;
     },
   },
 });
 
 export const authActions = authSlice.actions;
-
 export default authSlice.reducer;

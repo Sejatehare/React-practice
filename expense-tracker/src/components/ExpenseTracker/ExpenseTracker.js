@@ -1,141 +1,73 @@
-import { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { authActions } from "../../Store/auth-slice.js";
-import ExpenseList from "./ExpenseList.js";
-import ExpenseContext from "../../Store/ExpenseContext.js";
-import "./ExpenseTracker.css";
+import { authActions } from "../../Store/auth-slice";
+import ExpenseContext from "../../Store/ExpenseContext";
+import ExpenseList from "./ExpenseList";
+import DownloadCSVButton from "./DownloadCSVButton";
 
 const ExpenseTracker = () => {
-  const [moneySpent, setMoneySpent] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [editExpense, setEditExpense] = useState(false);
-  const [editExpenseId, setEditExpenseId] = useState(false);
+  const [money, setMoney] = useState("");
+  const [desc, setDesc] = useState("");
+  const [cat, setCat] = useState("");
+  const [isEdit, setIsEdit] = useState(false);
+  const [editId, setEditId] = useState(null);
 
   const dispatch = useDispatch();
+  const isPremium = useSelector((s) => s.auth.isPremium);
+  const items = useSelector((s) => s.expense.items);
+  const total = items.reduce((sum, e) => sum + Number(e.moneySpent), 0);
 
-  //redux items
-  const items = useSelector((state) => state.expenseStore.items);
-  const totalPrice = items.reduce(
-    (total, item) => total + Number(item.moneySpent),
-    0
-  );
-
-  const expenseCtx = useContext(ExpenseContext);
+  const ctx = useContext(ExpenseContext);
 
   useEffect(() => {
-    expenseCtx.fetchExpense();
+    ctx.fetchExpense();
   }, []);
 
-  const onEditExpense = (expense) => {
-    setEditExpense(true);
-    setMoneySpent(expense.moneySpent);
-    setDescription(expense.description);
-    setCategory(expense.category);
-    setEditExpenseId(expense.id);
-  };
-
-  const editExpenseHandler = (event) => {
-    event.preventDefault();
-
-    const editExpense = {
-      id: editExpenseId,
-      moneySpent,
-      description,
-      category,
-    };
-
-    setMoneySpent("");
-    setDescription("");
-    setCategory("");
-    setEditExpense(false);
-
-    expenseCtx.updateExpense(editExpense);
-  };
-
-  const expenseSubmitHandler = (e) => {
+  const submitHandler = (e) => {
     e.preventDefault();
-
-    const newExpense = {
-      moneySpent,
-      description,
-      category,
-    };
-
-    expenseCtx.addExpense(newExpense);
-
-    setMoneySpent("");
-    setDescription("");
-    setCategory("");
+    const obj = { moneySpent: money, description: desc, category: cat };
+    if (isEdit) {
+      ctx.updateExpense({ ...obj, id: editId });
+    } else {
+      ctx.addExpense(obj);
+    }
+    setMoney(""); setDesc(""); setCat(""); setIsEdit(false);
   };
 
-  const premiumHandler = () => {
-    dispatch(authActions.setIsPremium());
+  const onEdit = (e) => {
+    setIsEdit(true);
+    setMoney(e.moneySpent);
+    setDesc(e.description);
+    setCat(e.category);
+    setEditId(e.id);
+  };
+
+  const activateHandler = () => {
+    dispatch(authActions.activatePremium());
   };
 
   return (
-    <div className="expense-tracker">
-      <h2 className="header">Expense Tracker</h2>
-      <form className="expense-form">
-        <label className="form-label">
-          Money Spent:
-          <input
-            className="form-input"
-            type="text"
-            value={moneySpent}
-            onChange={(e) => setMoneySpent(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <label className="form-label">
-          Description:
-          <input
-            className="form-input"
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <label className="form-label">
-          Category:
-          <select
-            className="form-select"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            required
-          >
-            <option value="">Select a category</option>
-            <option value="Food">Food</option>
-            <option value="Petrol">Petrol</option>
-            <option value="Salary">Salary</option>
-          </select>
-        </label>
-        <br />
-        <button
-          className="form-button"
-          type="button"
-          onClick={editExpense ? editExpenseHandler : expenseSubmitHandler}
-        >
-          {editExpense ? "Edit Expense" : "Add Expense"}
-        </button>
-        {totalPrice >= 10000 && (
-          <button
-            className="form-button"
-            type="button"
-            onClick={premiumHandler}
-          >
-            Premium
-          </button>
-        )}
+    <div>
+      <h2>Expense Tracker</h2>
+      <form onSubmit={submitHandler}>
+        <input placeholder="Money" value={money} onChange={(e) => setMoney(e.target.value)} required />
+        <input placeholder="Description" value={desc} onChange={(e) => setDesc(e.target.value)} required />
+        <select value={cat} onChange={(e) => setCat(e.target.value)} required>
+          <option value="">Select Category</option>
+          <option>Food</option>
+          <option>Petrol</option>
+          <option>Salary</option>
+        </select>
+        <button type="submit">{isEdit ? "Edit" : "Add"}</button>
       </form>
 
-      <ExpenseList
-        expenses={expenseCtx.expenses}
-        onEditExpense={onEditExpense}
-      />
+      <ExpenseList expenses={items} onEditExpense={onEdit} />
+      <h3>Total: ₹{total}</h3>
+
+      {!isPremium && total >= 10000 && (
+        <button onClick={activateHandler}>Activate Premium</button>
+      )}
+      {isPremium && <DownloadCSVButton />}
     </div>
   );
 };

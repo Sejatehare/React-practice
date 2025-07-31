@@ -7,6 +7,26 @@
   color: #ac0000;
 }
 
+.darkTheme button {
+  background-color: #333;
+  color: white;
+  border: 1px solid #888;
+}
+
+.darkTheme input,
+.darkTheme select {
+  background-color: #222;
+  color: white;
+  border: 1px solid #777;
+}
+
+.darkTheme p,
+.darkTheme h2,
+.darkTheme h3,
+.darkTheme h1{
+  color: white;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
