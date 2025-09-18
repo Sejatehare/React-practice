@@ -1,74 +1,78 @@
-import { useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
-import AuthContext from "../../Store/AuthContext";
+import { authActions } from "../../Store/auth-slice";
+import { userActions } from "../../Store/userSlice";
 import { themeActions } from "../../Store/theme-slice";
 import classes from "./MainNavigation.module.css";
 
 const MainNavigation = () => {
-  const authCtx = useContext(AuthContext);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const isLoggedIn = authCtx.isLoggedIn;
-  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const isPremium = useSelector((state) => state.auth.isPremium);
+  const isDark = useSelector((state) => state.theme.isDark);
+  const expenses = useSelector((state) => state.expenses.items || []);
 
-  const premium = useSelector((state) => state.auth.isPremium);
-  const items = useSelector((state) => state.expense?.items || []);
-  const isDarkMode = useSelector((state) => state.theme.isDark);
+  const logoutHandler = () => {
+    localStorage.removeItem("profileCompleted")
+    dispatch(authActions.logout());
+    dispatch(userActions.clearUser());
+    navigate("/auth");
+  };
 
-  const toggleDarkModeHandler = () => {
+  const toggleDarkMode = () => {
     dispatch(themeActions.toggleTheme());
   };
 
-  const downloadHandler = () => {
-    const csvData = Papa.unparse(items);
-
-    const blob = new Blob([csvData], { type: "text/csv;charset=utf-8" });
-
+  const downloadCSV = () => {
+    const csv = Papa.unparse(expenses);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     saveAs(blob, "expenses.csv");
   };
 
-  const logoutHandler = () => {
-    authCtx.logout();
-    navigate("./auth");
-  };
-
   return (
-    <div className={classes.header}>
+    <header className={classes.header}>
       <Link to="/">
         <div className={classes.logo}>Expense Tracker</div>
       </Link>
       <nav>
         <ul>
-          {premium && (
+          {isLoggedIn && (
             <li>
-              <button onClick={toggleDarkModeHandler}>{`${
-                isDarkMode ? "Light Mode" : "Dark Mode"
-              }`}</button>
-              <button onClick={downloadHandler}>Download Expenses</button>
+              <button onClick={toggleDarkMode}>
+                {isDark ? "Light Mode" : "Dark Mode"}
+              </button>
             </li>
           )}
+
+          {isPremium && (
+              <li>
+                <button onClick={downloadCSV}>Download CSV</button>
+              </li>
+          )}
+
           {!isLoggedIn && (
             <li>
               <Link to="/auth">Login</Link>
             </li>
           )}
+
           {isLoggedIn && (
-            <li>
-              <Link to="/profile">Profile</Link>
-            </li>
-          )}
-          {isLoggedIn && (
-            <li>
-              <button onClick={logoutHandler}>Logout</button>
-            </li>
+            <>
+              <li>
+                <Link to="/profile">Profile</Link>
+              </li>
+              <li>
+                <button onClick={logoutHandler}>Logout</button>
+              </li>
+            </>
           )}
         </ul>
-        <button onClick={toggleDarkModeHandler}>Toggle Dark Mode</button>
       </nav>
-    </div>
+    </header>
   );
 };
 

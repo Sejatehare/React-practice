@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* small helpers */
+:root{--transition:200ms}
+body{transition:background-color var(--transition),color var(--transition)}

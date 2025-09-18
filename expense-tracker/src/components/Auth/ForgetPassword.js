@@ -1,53 +1,31 @@
-import { useNavigate } from "react-router-dom";
-import { useContext, useRef } from "react";
-import AuthContext from "../../Store/AuthContext";
-import "./ForgetPassword.css";
+import React, { useRef } from "react";
+import classes from "./ForgetPassword.css";
 
 const ForgetPassword = () => {
-  const authCtx = useContext(AuthContext);
-  const navigate = useNavigate();
-  const emailInputRef = useRef();
+  const emailRef = useRef();
 
-  const passwordHandler = () => {
-    const enteredEmail = emailInputRef.current.value;
+  const resetPassword = async () => {
+    const email = emailRef.current.value;
     try {
-      fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyAl2_-4qrH9gTXCHoxpWVKvUtpgfgrcVTo",
+      const res = await fetch(
+        "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=YOUR_KEY",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            requestType: "PASSWORD_RESET",
-            email: enteredEmail,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ requestType: "PASSWORD_RESET", email }),
         }
-      )
-        .then((res) => {
-          if (res.ok) {
-            alert("Password rest link sent to your email");
-            navigate("/auth");
-          } else {
-            throw new Error("Error while sending password reset link");
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          alert("Enter valid Email");
-        });
-    } catch {
-      alert("Enter valid email");
+      );
+      if (!res.ok) throw new Error("Failed to send reset email");
+      alert("Password reset link sent!");
+    } catch (err) {
+      alert(err.message);
     }
   };
 
   return (
-    <div className="forget-password">
-      <div className="control">
-        <label htmlFor="email">Email</label>
-        <input type="email" id="email" required ref={emailInputRef} />
-      </div>
-      <button onClick={passwordHandler}>Reset Password</button>
+    <div>
+      <input type="email" placeholder="Enter email" ref={emailRef} className={classes.forgetpassword}/>
+      <button onClick={resetPassword}>Reset Password</button>
     </div>
   );
 };

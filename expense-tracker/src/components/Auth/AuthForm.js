@@ -1,123 +1,103 @@
-import { useState, useRef, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import AuthContext from "../../Store/AuthContext";
-import { Link } from "react-router-dom";
-import classes from "./AuthForm.module.css";
+import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../Store/auth-slice";
+import { toast } from "react-toastify";
 
 const AuthForm = () => {
-  const emailRef = useRef();
-  const passRef = useRef();
-  const confirmPassRef = useRef();
-
+  const emailInputRef = useRef();
+  const passwordInputRef = useRef();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
 
-  const authCtx = useContext(AuthContext);
-  const navigate = useNavigate();
+  const switchAuthModeHandler = () => setIsLogin((prev) => !prev);
 
-  const switchModeHandler = () => {
-    setIsLogin((prev) => !prev);
-    setError(null);
-  };
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    const enteredEmail = emailInputRef.current.value;
+    const enteredPassword = passwordInputRef.current.value;
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    const email = emailRef.current.value;
-    const password = passRef.current.value;
-
-    if (!isLogin && password !== confirmPassRef.current.value) {
-      setError("Passwords do not match!");
+    if (!enteredEmail || !enteredPassword) {
+      toast.error("Please enter both email and password");
       return;
     }
 
     setIsLoading(true);
-    const url = isLogin
-      ? `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAl2_-4qrH9gTXCHoxpWVKvUtpgfgrcVTo`
-      : `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAl2_-4qrH9gTXCHoxpWVKvUtpgfgrcVTo`;
-
     try {
-      const res = await fetch(url, {
+      const url = isLogin
+        ? "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAl2_-4qrH9gTXCHoxpWVKvUtpgfgrcVTo"
+        : "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAl2_-4qrH9gTXCHoxpWVKvUtpgfgrcVTo";
+
+      const response = await fetch(url, {
         method: "POST",
         body: JSON.stringify({
-          email,
-          password,
+          email: enteredEmail,
+          password: enteredPassword,
           returnSecureToken: true,
         }),
         headers: { "Content-Type": "application/json" },
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error?.message || "Authentication failed.");
+      if (!response.ok) {
+        throw new Error("Authentication failed!");
       }
 
-      authCtx.login(data.idToken, email, data.localId);
+      const data = await response.json();
+      dispatch(authActions.login({ token: data.idToken, userId: data.localId }));
 
-      if (!isLogin) {
-        await fetch(
-          `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyAl2_-4qrH9gTXCHoxpWVKvUtpgfgrcVTo`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              requestType: "VERIFY_EMAIL",
-              idToken: data.idToken,
-            }),
-          }
-        );
-        alert("Verification email sent. Please check your inbox.");
-      }
-
-      navigate("/");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
+      toast.success(isLogin ? "Login successful!" : "Account created!");
+    } catch (error) {
+      toast.error(error.message || "Something went wrong!");
     }
+    setIsLoading(false);
   };
 
   return (
-    <section className={classes.auth}>
-      <h1>{isLogin ? "Login" : "Sign Up"}</h1>
-      <form onSubmit={submitHandler}>
-        <div className={classes.control}>
-          <label>Email</label>
-          <input type="email" required ref={emailRef} />
-        </div>
-        <div className={classes.control}>
-          <label>Password</label>
-          <input type="password" required ref={passRef} />
-        </div>
-
-        {isLogin && (
-          <div style={{ marginTop: "10px" }}>
-            <Link to="/forget-password">Forgot Password?</Link>
+    <section className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-2xl p-8 w-full max-w-md">
+        <h1 className="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-white">
+          {isLogin ? "Login" : "Sign Up"}
+        </h1>
+        <form onSubmit={submitHandler} className="space-y-4">
+          <div>
+            <label className="block mb-1 text-gray-700 dark:text-gray-300">Email</label>
+            <input
+              type="email"
+              ref={emailInputRef}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              required
+            />
           </div>
-        )}
-
-        {!isLogin && (
-          <div className={classes.control}>
-            <label>Confirm Password</label>
-            <input type="password" required ref={confirmPassRef} />
+          <div>
+            <label className="block mb-1 text-gray-700 dark:text-gray-300">Password</label>
+            <input
+              type="password"
+              ref={passwordInputRef}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              required
+            />
           </div>
-        )}
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
-        <div className={classes.actions}>
-          <button type="submit">
-            {isLoading ? "Sending..." : isLogin ? "Login" : "Create Account"}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition duration-200 disabled:opacity-50"
+          >
+            {isLoading ? "Loading..." : isLogin ? "Login" : "Create Account"}
           </button>
+        </form>
+
+        <p className="text-center mt-4 text-gray-600 dark:text-gray-400">
+          {isLogin ? "Don't have an account?" : "Already have an account?"}
           <button
             type="button"
-            className={classes.toggle}
-            onClick={switchModeHandler}
+            onClick={switchAuthModeHandler}
+            className="text-blue-600 hover:underline ml-1"
           >
-            {isLogin ? "Create new account" : "Have an account? Login"}
+            {isLogin ? "Sign up" : "Login"}
           </button>
-        </div>
-      </form>
+        </p>
+      </div>
     </section>
   );
 };

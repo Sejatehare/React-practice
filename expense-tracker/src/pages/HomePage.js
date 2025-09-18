@@ -1,38 +1,33 @@
-import { useContext } from "react";
+import React from "react";
+import { useSelector } from "react-redux";
+import ExpenseTracker from "../components/Dashboard/ExpenseTracker";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../Store/AuthContext";
-import classes from "./HomePage.module.css";
-import ExpenseTracker from "../components/ExpenseTracker/ExpenseTracker";
 
 const HomePage = () => {
-  const authCtx = useContext(AuthContext);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const profileCompleted = useSelector((state) => state.auth.profileCompleted);
   const navigate = useNavigate();
 
-  const profileHandler = () => {
-    navigate("./profile");
+  const completeProfileHandler = () => {
+    navigate("/complete-profile");
   };
 
-  const profileCompleted = localStorage.getItem("profileCompleted") === "true";
-
   return (
-    <>
-      {authCtx.isLoggedIn ? (
-        <div>
-          <section className={classes.starting}>
-            <p>Welcome to Expense Tracker!!!</p>
-            {!profileCompleted && (
-              <div className={classes.profile}>
-                <p>Your profile is incomplete.</p>
-                <button onClick={profileHandler}>Complete Now</button>
-              </div>
-            )}
-          </section>
-          <ExpenseTracker />
-        </div>
+    <section>
+      {isLoggedIn ? (
+        <>
+          {!profileCompleted && (
+            <div style={{ border: "1px solid orange", padding: "1rem", marginBottom: "1rem" }}>
+              <p>Your profile is incomplete.</p>
+              <button onClick={completeProfileHandler}>Complete Now</button>
+            </div>
+          )}
+          {profileCompleted && <ExpenseTracker />}
+        </>
       ) : (
-        <h1>Welcome to Expense Tracker!!!</h1>
+        <h1>Welcome! Please login or sign up.</h1>
       )}
-    </>
+    </section>
   );
 };
 
