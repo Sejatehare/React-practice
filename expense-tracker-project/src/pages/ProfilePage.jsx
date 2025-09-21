@@ -107,7 +107,7 @@ export default function ProfilePage() {
           <p><span className="font-semibold">Mobile:</span> {mobile}</p>
           <p><span className="font-semibold">Email:</span> {user?.email}</p>
 
-          <div className="center space-y-2">
+          <div className="center grid grid-cols-2 gap-4">
             <button
               onClick={downloadExpenses}
               className="px-4 py-2 bg-green-600 text-white rounded"
