@@ -1,13 +1,12 @@
-// store/actions/expenseActions.js
 import { getDatabase, ref, push, set, get, remove, update } from "firebase/database";
-import { setExpenses, addExpense, updateExpense, deleteExpense, setLoading } from "../expense-slice";
+import { setExpenses, addExpense, updateExpense, removeExpense, setLoading } from "../expense-slice";
 
 export const fetchExpenses = (userId) => async (dispatch) => {
   if (!userId) return;
   dispatch(setLoading(true));
   const db = getDatabase();
   try {
-    const snapshot = await get(ref(db, `users/${userId}/expenses`)); // ✅ corrected path
+    const snapshot = await get(ref(db, `users/${userId}/expenses`));
     if (snapshot.exists()) {
       const expensesArray = Object.keys(snapshot.val()).map(key => ({
         id: key,
@@ -26,7 +25,7 @@ export const fetchExpenses = (userId) => async (dispatch) => {
 export const addExpenseToFirebase = (userId, expenseData) => async (dispatch) => {
   if (!userId) return;
   const db = getDatabase();
-  const newExpenseRef = push(ref(db, `users/${userId}/expenses`)); // ✅ corrected path
+  const newExpenseRef = push(ref(db, `users/${userId}/expenses`));
   await set(newExpenseRef, expenseData);
   dispatch(addExpense({ id: newExpenseRef.key, ...expenseData }));
 };
@@ -34,13 +33,13 @@ export const addExpenseToFirebase = (userId, expenseData) => async (dispatch) =>
 export const updateExpenseInFirebase = (userId, expenseId, expenseData) => async (dispatch) => {
   if (!userId) return;
   const db = getDatabase();
-  await update(ref(db, `users/${userId}/expenses/${expenseId}`), expenseData); // ✅ corrected path
+  await update(ref(db, `users/${userId}/expenses/${expenseId}`), expenseData); 
   dispatch(updateExpense({ id: expenseId, ...expenseData }));
 };
 
 export const deleteExpenseFromFirebase = (userId, expenseId) => async (dispatch) => {
   if (!userId) return;
   const db = getDatabase();
-  await remove(ref(db, `users/${userId}/expenses/${expenseId}`)); // ✅ corrected path
-  dispatch(deleteExpense(expenseId));
+  await remove(ref(db, `users/${userId}/expenses/${expenseId}`));
+  dispatch(removeExpense(expenseId));
 };

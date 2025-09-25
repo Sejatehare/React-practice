@@ -6,7 +6,7 @@ const AddExpenseForm = ({ userId }) => {
   const dispatch = useDispatch();
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
-  const [type, setType] = useState("debit"); // default type
+  const [type, setType] = useState("debit");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -18,8 +18,7 @@ const AddExpenseForm = ({ userId }) => {
       await dispatch(addExpenseToFirebase(userId, {
         title,
         amount: parseFloat(amount),
-        type, // "credit" or "debit"
-        date: new Date().toISOString(),
+        type,
       }));
       setTitle("");
       setAmount("");

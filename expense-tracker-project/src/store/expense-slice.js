@@ -1,4 +1,3 @@
-// store/expenses-slice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -20,7 +19,7 @@ const expensesSlice = createSlice({
       const index = state.expenses.findIndex(e => e.id === action.payload.id);
       if (index !== -1) state.expenses[index] = action.payload;
     },
-    deleteExpense(state, action) {
+    removeExpense(state, action) {
       state.expenses = state.expenses.filter(e => e.id !== action.payload);
     },
     setLoading(state, action) {
@@ -32,5 +31,5 @@ const expensesSlice = createSlice({
   }
 });
 
-export const { setExpenses, addExpense, updateExpense, deleteExpense, setLoading, clearExpenses } = expensesSlice.actions;
+export const { setExpenses, addExpense, updateExpense, removeExpense, setLoading, clearExpenses } = expensesSlice.actions;
 export default expensesSlice.reducer;

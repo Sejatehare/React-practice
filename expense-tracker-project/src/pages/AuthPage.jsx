@@ -1,4 +1,3 @@
-// pages/AuthPage.jsx
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, setToken } from "../store/auth-slice";
@@ -21,6 +20,7 @@ const AuthPage = () => {
   const [isSignup, setIsSignup] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [loading, setLoadingLocal] = useState(false);
@@ -50,6 +50,11 @@ const AuthPage = () => {
   };
 
   const handleSignup = async () => {
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match!");
+      return;
+    }
+
     setLoadingLocal(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -108,7 +113,6 @@ const AuthPage = () => {
     }
   };
 
-  // Reusable input style
   const inputClass = "w-full px-4 py-2 border rounded-md bg-gray-100 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500";
 
   return (
@@ -144,7 +148,7 @@ const AuthPage = () => {
             <h2 className="text-2xl font-bold text-center">{isSignup ? "Sign Up" : "Login"}</h2>
             <input
               type="email"
-              placeholder="Username"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={inputClass}
@@ -156,6 +160,15 @@ const AuthPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               className={inputClass}
             />
+            {isSignup && (
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={inputClass}
+              />
+            )}
             <button
               onClick={isSignup ? handleSignup : handleLogin}
               disabled={loading}
