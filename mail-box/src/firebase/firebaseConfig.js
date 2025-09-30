@@ -1,4 +1,4 @@
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyCS78u_o-JeNbkUlxgnGzjAAE1fREGlC3c",
   authDomain: "mail-box-13540.firebaseapp.com",
   projectId: "mail-box-13540",
