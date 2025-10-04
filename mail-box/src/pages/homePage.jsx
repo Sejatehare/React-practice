@@ -1,29 +1,33 @@
 // src/components/HomePage.jsx
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { auth, database } from "../firebase/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { ref, onValue } from "firebase/database";
+
 import ComposeMail from "../components/folders/Composemail";
 import ProfilePage from "./profilePage";
 import InboxList from "../components/folders/InboxList";
 import SentList from "../components/folders/SentList";
 import BinList from "../components/folders/BinList";
 import StarredList from "../components/folders/StarredList";
+
 import { emailToKey } from "../firebase/firebaseKey";
-import { useNavigate } from "react-router-dom";
+import { listenMails } from "../store/mailSlice";
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const mails = useSelector((state) => state.mail.mails);
+  const unreadCount = useSelector((state) => state.mail.unreadCount);
+
   const [active, setActive] = useState("Inbox");
   const [showCompose, setShowCompose] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
-
-  const [inbox, setInbox] = useState([]);
-  const [sent, setSent] = useState([]);
-  const [bin, setBin] = useState([]);
-  const [starred, setStarred] = useState([]);
 
   const menuItems = ["Compose", "Inbox", "Sent", "Bin", "Starred"];
 
@@ -34,54 +38,48 @@ export default function HomePage() {
         return;
       }
       setCurrentUser(user);
-      // profile listener
+
+      // Profile listener
       const profileRef = ref(database, `users/${user.uid}`);
       onValue(profileRef, (snap) => {
-        const data = snap.val();
-        setProfilePhoto(data?.photoURL || null);
+        setProfilePhoto(snap.val()?.photoURL || null);
       });
 
-      // mailbox listeners
-      const key = emailToKey(user.email);
-      const inboxRef = ref(database, `mails/${key}/inbox`);
-      const sentRef = ref(database, `mails/${key}/sent`);
-      const binRef = ref(database, `mails/${key}/bin`);
-      const starredRef = ref(database, `mails/${key}/starred`);
-
-      onValue(inboxRef, (snap) => {
-        const val = snap.val();
-        setInbox(val ? Object.values(val).sort((a,b)=>b.timestamp-a.timestamp) : []);
-      });
-      onValue(sentRef, (snap) => {
-        const val = snap.val();
-        setSent(val ? Object.values(val).sort((a,b)=>b.timestamp-a.timestamp) : []);
-      });
-      onValue(binRef, (snap) => {
-        const val = snap.val();
-        setBin(val ? Object.values(val).sort((a,b)=>b.timestamp-a.timestamp) : []);
-      });
-      onValue(starredRef, (snap) => {
-        const val = snap.val();
-        setStarred(val ? Object.values(val).sort((a,b)=>b.timestamp-a.timestamp) : []);
-      });
+      // Listen to mails
+      const userKey = emailToKey(user.email);
+      dispatch(listenMails(userKey));
     });
-    return () => unsub();
-  }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userUid");
+    return () => unsub();
+  }, [dispatch, navigate]);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    localStorage.clear();
     navigate("/login");
   };
 
+  // Filter mails for folders
+  const inbox = mails.filter((m) => m.folder === "inbox");
+  const sent = mails.filter((m) => m.folder === "sent");
+  const starred = mails.filter((m) => m.folder === "starred");
+  const bin = mails.filter((m) => m.folder === "bin");
+
   const renderMain = () => {
-    if (active === "Inbox") return <InboxList mails={inbox} />;
-    if (active === "Sent") return <SentList mails={sent} />;
-    if (active === "Bin") return <BinList mails={bin} />;
-    if (active === "Starred") return <StarredList mails={starred} />;
-    if (active === "Compose") return <div className="text-center">Click Compose (or press the Compose button)</div>;
-    return null;
+    switch (active) {
+      case "Inbox":
+        return <InboxList mails={inbox} userId={emailToKey(currentUser?.email)} />;
+      case "Sent":
+        return <SentList mails={sent} />;
+      case "Bin":
+        return <BinList mails={bin} />;
+      case "Starred":
+        return <StarredList mails={starred} />;
+      case "Compose":
+        return <div className="text-center">Click Compose (or press Compose button)</div>;
+      default:
+        return null;
+    }
   };
 
   return (
@@ -97,33 +95,57 @@ export default function HomePage() {
                 setActive(item);
                 if (item === "Compose") setShowCompose(true);
               }}
-              className={`text-left px-5 py-3 rounded-lg font-medium transition ${active === item ? "bg-gradient-to-r from-purple-400 to-blue-400 text-white shadow-md" : "text-gray-800 hover:bg-purple-200/60"}`}
+              className={`text-left px-5 py-3 rounded-lg font-medium transition ${
+                active === item
+                  ? "bg-gradient-to-r from-purple-400 to-blue-400 text-white shadow-md"
+                  : "text-gray-800 hover:bg-purple-200/60"
+              }`}
             >
-              {item === "Compose" && "✉️ "}
-              {item === "Inbox" && "📥 "}
-              {item === "Sent" && "📤 "}
-              {item === "Bin" && "🗑️ "}
-              {item === "Starred" && "⭐ "}
-              {item}
+              {item === "Inbox" ? (
+                <div className="flex items-center justify-between w-full">
+                  <span>{item}</span>
+                  {unreadCount > 0 && (
+                    <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">{unreadCount}</span>
+                  )}
+                </div>
+              ) : (
+                item
+              )}
             </button>
           ))}
         </nav>
       </aside>
 
-      {/* Main */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col">
         <header className="flex justify-between items-center px-8 py-4 bg-gradient-to-r from-blue-50 to-purple-50 shadow-sm">
           <h1 className="text-3xl font-bold text-gray-800">{active}</h1>
           <div className="flex items-center gap-4">
-            <img src={profilePhoto || "https://via.placeholder.com/40"} alt="profile" className="w-10 h-10 rounded-full cursor-pointer border-2 border-white shadow-md" onClick={() => setShowProfile(true)} />
-            <button onClick={handleLogout} className="px-5 py-2 bg-gradient-to-r from-pink-300 to-red-400 text-white rounded-full shadow-md">Logout</button>
+            <img
+              src={profilePhoto || "https://via.placeholder.com/40"}
+              alt="profile"
+              className="w-10 h-10 rounded-full cursor-pointer border-2 border-white shadow-md"
+              onClick={() => setShowProfile(true)}
+            />
+            <button
+              onClick={handleLogout}
+              className="px-5 py-2 bg-gradient-to-r from-pink-300 to-red-400 text-white rounded-full shadow-md"
+            >
+              Logout
+            </button>
           </div>
         </header>
 
         <main className="flex-1 p-8 overflow-y-auto">{renderMain()}</main>
       </div>
 
-      <ComposeMail show={showCompose} onClose={() => { setShowCompose(false); setActive("Inbox"); }} />
+      <ComposeMail
+        show={showCompose}
+        onClose={() => {
+          setShowCompose(false);
+          setActive("Inbox");
+        }}
+      />
       <ProfilePage show={showProfile} onClose={() => setShowProfile(false)} />
     </div>
   );
