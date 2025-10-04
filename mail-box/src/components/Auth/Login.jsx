@@ -1,60 +1,45 @@
-import { useState } from "react";
+// src/components/Auth/Login.jsx
+import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const token = await userCredential.user.getIdToken();
+      const user = userCredential.user;
+      const token = await user.getIdToken();
       localStorage.setItem("token", token);
-      navigate("/welcome");
+      localStorage.setItem("userEmail", user.email);
+      localStorage.setItem("userUid", user.uid);
+      navigate("/homepage");
     } catch (error) {
+      console.error("Login error:", error);
       alert("Invalid credentials. Try again!");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500 p-6">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-10">
-        <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-6">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 p-6">
+      <div className="w-full max-w-md bg-white/80 rounded-2xl shadow-lg p-8">
+        <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">Welcome back</h2>
+        <p className="text-sm text-gray-700 text-center mb-6">Login to continue</p>
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
-          <input
-            type="email"
-            placeholder="Email"
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-          />
-          <button
-            type="submit"
-            className="mt-4 px-4 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl shadow-md transition"
-          >
-            Login
-          </button>
+          <input type="email" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} className="px-4 py-2 rounded-md border focus:outline-none" required />
+          <input type="password" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} className="px-4 py-2 rounded-md border focus:outline-none" required />
+          <button type="submit" disabled={loading} className={`py-2 rounded-md font-semibold ${loading ? "bg-gray-400" : "bg-indigo-600 text-white hover:bg-indigo-700"}`}>{loading ? "Signing in..." : "Login"}</button>
         </form>
-        <p className="text-center text-gray-500 mt-4">
-          Don’t have an account?{" "}
-          <span
-            onClick={() => navigate("/signup")}
-            className="text-indigo-500 cursor-pointer hover:underline"
-          >
-            Signup
-          </span>
-        </p>
+        <p className="text-sm text-center text-gray-700 mt-4">Don’t have an account? <span className="text-indigo-600 cursor-pointer" onClick={() => navigate("/signup")}>Sign up</span></p>
       </div>
     </div>
   );
