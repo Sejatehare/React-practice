@@ -1,4 +1,3 @@
-// src/components/ProfileModal.jsx
 import React, { useState, useEffect } from "react";
 import { auth, database } from "../firebase/firebase";
 import { ref, set, get } from "firebase/database";

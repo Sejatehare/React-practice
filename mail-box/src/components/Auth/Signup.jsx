@@ -1,4 +1,3 @@
-// src/components/Auth/Signup.jsx
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "../../firebase/firebase";

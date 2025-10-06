@@ -1,4 +1,3 @@
-// src/components/HomePage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -29,6 +28,7 @@ export default function HomePage() {
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
+  const [userKey, setUserKey] = useState(null);
   const menuItems = ["Compose", "Inbox", "Sent", "Bin", "Starred"];
 
   useEffect(() => {
@@ -38,20 +38,28 @@ export default function HomePage() {
         return;
       }
       setCurrentUser(user);
+      const key = emailToKey(user.email);
+      setUserKey(key);
 
-      // Profile listener
       const profileRef = ref(database, `users/${user.uid}`);
       onValue(profileRef, (snap) => {
         setProfilePhoto(snap.val()?.photoURL || null);
       });
 
-      // Listen to mails
-      const userKey = emailToKey(user.email);
-      dispatch(listenMails(userKey));
+      dispatch(listenMails(key));
     });
 
     return () => unsub();
   }, [dispatch, navigate]);
+
+  useEffect(() => {
+    if (!userKey) return;
+    const interval = setInterval(() => {
+      dispatch(listenMails(userKey));
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [dispatch, userKey]);
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -59,7 +67,6 @@ export default function HomePage() {
     navigate("/login");
   };
 
-  // Filter mails for folders
   const inbox = mails.filter((m) => m.folder === "inbox");
   const sent = mails.filter((m) => m.folder === "sent");
   const starred = mails.filter((m) => m.folder === "starred");
@@ -68,13 +75,13 @@ export default function HomePage() {
   const renderMain = () => {
     switch (active) {
       case "Inbox":
-        return <InboxList mails={inbox} userId={emailToKey(currentUser?.email)} />;
+        return <InboxList mails={inbox} userId={userKey} />;
       case "Sent":
         return <SentList mails={sent} />;
       case "Bin":
-        return <BinList mails={bin} />;
+        return <BinList mails={bin} userId={userKey} />;
       case "Starred":
-        return <StarredList mails={starred} />;
+        return <StarredList mails={starred} userId={userKey} />;
       case "Compose":
         return <div className="text-center">Click Compose (or press Compose button)</div>;
       default:
@@ -84,7 +91,6 @@ export default function HomePage() {
 
   return (
     <div className="flex min-h-screen w-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 text-gray-900">
-      {/* Sidebar */}
       <aside className="w-64 bg-gradient-to-l from-purple-100 to-blue-100 shadow-xl flex flex-col">
         <h2 className="text-2xl font-bold p-6 text-gray-800">📨 Mailbox</h2>
         <nav className="flex flex-col gap-2 px-4 mt-2 flex-1">
@@ -116,7 +122,6 @@ export default function HomePage() {
         </nav>
       </aside>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col">
         <header className="flex justify-between items-center px-8 py-4 bg-gradient-to-r from-blue-50 to-purple-50 shadow-sm">
           <h1 className="text-3xl font-bold text-gray-800">{active}</h1>

@@ -1,12 +1,10 @@
-// src/App.jsx
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Signup from "./components/Auth/Signup";
 import Login from "./components/Auth/Login";
 import HomePage from "./pages/homePage";
 
-import "react-quill/dist/quill.snow.css"; // Quill CSS (global)
-
+import "react-quill/dist/quill.snow.css";
 function App() {
   const token = localStorage.getItem("token");
 

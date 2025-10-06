@@ -1,18 +1,23 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { markMailAsRead } from "../../store/mailSlice";
-import { ref, push } from "firebase/database";
+import { ref, set, remove, update } from "firebase/database";
 import { database } from "../../firebase/firebase";
-import { emailToKey } from "../../firebase/firebaseKey";
 
-export default function InboxList({ mails = [], userId, onRefresh }) {
+export default function InboxList({ mails = [], userId }) {
   const dispatch = useDispatch();
   const [selectedMail, setSelectedMail] = useState(null);
 
   const handleOpenMail = (mail) => {
     setSelectedMail(mail);
     if (!mail.read) {
-      dispatch(markMailAsRead({ userId, mailId: mail.id }));
+      dispatch(
+        markMailAsRead({
+          userKey: userId,
+          firebaseKey: mail.firebaseKey,
+          folder: "inbox",
+        })
+      );
     }
   };
 
@@ -20,33 +25,48 @@ export default function InboxList({ mails = [], userId, onRefresh }) {
 
   const handleStar = async (mail) => {
     try {
-      await push(ref(database, `mails/${emailToKey(mail.to)}/starred`), mail);
-      alert("Starred successfully!");
+      await set(ref(database, `mails/${userId}/starred/${mail.firebaseKey}`), {
+        ...mail,
+        starred: true,
+      });
+      await update(ref(database, `mails/${userId}/inbox/${mail.firebaseKey}`), {
+        starred: true,
+      });
     } catch (err) {
       console.error(err);
       alert("Failed to star");
     }
   };
 
-  const handleDelete = async (mail) => {
+  const handleUnstar = async (mail) => {
     try {
-      await push(ref(database, `mails/${emailToKey(mail.to)}/bin`), mail);
-      alert("Moved to bin!");
-      onRefresh && onRefresh();
+      await remove(ref(database, `mails/${userId}/starred/${mail.firebaseKey}`));
+      await update(ref(database, `mails/${userId}/inbox/${mail.firebaseKey}`), {
+        starred: false,
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Failed to unstar");
+    }
+  };
+
+  const handleDelete = async (mail) => {
+    if (!window.confirm("Are you sure you want to delete this mail?")) return;
+
+    try {
+      await set(ref(database, `mails/${userId}/bin/${mail.firebaseKey}`), mail);
+      await remove(ref(database, `mails/${userId}/inbox/${mail.firebaseKey}`));
+      await remove(ref(database, `mails/${userId}/starred/${mail.firebaseKey}`));
     } catch (err) {
       console.error(err);
       alert("Failed to move to bin");
     }
   };
 
-  // 📨 Show selected mail content
   if (selectedMail) {
     return (
       <div className="p-6 bg-white rounded-xl shadow-md">
-        <button
-          onClick={handleBack}
-          className="text-blue-500 hover:underline mb-3"
-        >
+        <button onClick={handleBack} className="text-blue-500 hover:underline mb-3">
           ← Back to Inbox
         </button>
         <h3 className="text-xl font-semibold mb-2">{selectedMail.subject}</h3>
@@ -54,10 +74,7 @@ export default function InboxList({ mails = [], userId, onRefresh }) {
           From: {selectedMail.from} <br />
           To: {selectedMail.to}
         </p>
-        <div
-          className="text-gray-800"
-          dangerouslySetInnerHTML={{ __html: selectedMail.body }}
-        />
+        <div className="text-gray-800" dangerouslySetInnerHTML={{ __html: selectedMail.body }} />
         <p className="text-xs text-gray-500 mt-3">
           {new Date(selectedMail.timestamp).toLocaleString()}
         </p>
@@ -65,12 +82,11 @@ export default function InboxList({ mails = [], userId, onRefresh }) {
     );
   }
 
-  // 📬 Show mail list
   return (
     <div className="flex flex-col gap-4">
       {mails.map((m) => (
         <div
-          key={m.id}
+          key={m.firebaseKey}
           onClick={() => handleOpenMail(m)}
           className={`p-4 rounded-xl shadow-md bg-white cursor-pointer hover:bg-gray-50 ${
             !m.read ? "border-l-4 border-blue-500 font-semibold" : "font-normal"
@@ -79,24 +95,33 @@ export default function InboxList({ mails = [], userId, onRefresh }) {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-gray-600">From: {m.from}</p>
-              <h3 className="text-gray-800">{m.subject}</h3>
-              <div
-                className="mt-2 text-gray-700 truncate max-w-xl"
-                dangerouslySetInnerHTML={{
-                  __html: m.body || m.content || "",
-                }}
-              />
+              <h3 className="text-gray-800 flex items-center gap-2">
+                {m.subject}
+                {m.starred && <span className="text-yellow-500">★</span>}
+              </h3>
             </div>
             <div className="flex flex-col gap-2 ml-4">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleStar(m);
-                }}
-                className="px-3 py-1 bg-yellow-300 rounded"
-              >
-                ★ Star
-              </button>
+              {!m.starred ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStar(m);
+                  }}
+                  className="px-3 py-1 bg-yellow-300 rounded"
+                >
+                  ★ Star
+                </button>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleUnstar(m);
+                  }}
+                  className="px-3 py-1 bg-gray-300 rounded"
+                >
+                  ☆ Unstar
+                </button>
+              )}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
