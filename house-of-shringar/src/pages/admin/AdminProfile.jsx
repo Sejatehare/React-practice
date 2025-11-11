@@ -1,67 +1,101 @@
 // src/pages/admin/AdminProfile.jsx
 import React, { useEffect, useState } from "react";
-import { getUserFromDB, setUserInDB, getAllUsers } from "../../api/dbAPI";
+import { getUserFromDB, setUserInDB } from "../../api/dbAPI";
 
 export default function AdminProfile() {
-  const [users, setUsers] = useState([]);
-  const [selected, setSelected] = useState(null);
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const [admin, setAdmin] = useState(null);
   const [editing, setEditing] = useState(false);
 
+  // 🔹 Fetch current admin details
   useEffect(() => {
     (async () => {
       try {
-        const raw = await getAllUsers();
-        // getAllUsers returns object keyed by uid
-        if (raw) setUsers(Object.entries(raw).map(([uid, val])=>({ uid, ...val })));
-      } catch (err) { console.error(err); }
+        if (!user?.userId) return;
+        const data = await getUserFromDB(user.userId);
+        setAdmin({ uid: user.userId, ...data });
+      } catch (err) {
+        console.error("Error fetching admin details:", err);
+      }
     })();
-  }, []);
+  }, [user.userId]);
 
-  const loadUser = async (uid) => {
+  // 🔹 Save updated details
+  const saveChanges = async () => {
     try {
-      const data = await getUserFromDB(uid);
-      setSelected({ uid, ...data });
-      setEditing(true);
-    } catch (err) { console.error(err); }
-  };
-
-  const save = async () => {
-    try {
-      await setUserInDB(selected.uid, { email: selected.email, name: selected.name, phone: selected.phone, role: selected.role });
-      alert("Saved");
+      await setUserInDB(admin.uid, {
+        email: admin.email,
+        name: admin.name,
+        phone: admin.phone,
+        role: admin.role || "admin",
+      });
+      alert("Profile updated successfully ✅");
       setEditing(false);
-    } catch (err) { console.error(err); alert("Failed to save"); }
+    } catch (err) {
+      console.error("Failed to save:", err);
+      alert("❌ Error saving profile");
+    }
   };
+
+  if (!admin) return <div className="p-6 text-center">Loading admin details...</div>;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-2xl mb-4">Manage Users</h2>
-      <div className="grid grid-cols-3 gap-3">
-        {users.map(u => (
-          <div key={u.uid} className="p-3 bg-white rounded shadow">
-            <div className="font-semibold">{u.email}</div>
-            <div className="text-sm">{u.role}</div>
-            <button className="mt-2 bg-blue-600 text-white px-2 py-1 rounded" onClick={()=>loadUser(u.uid)}>Edit</button>
-          </div>
-        ))}
-      </div>
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">Admin Profile</h2>
 
-      {editing && selected && (
-        <div className="mt-6 bg-white p-4 rounded shadow">
-          <h3 className="font-semibold mb-2">Edit {selected.email}</h3>
-          <label className="block mt-1">Name</label>
-          <input value={selected.name || ""} onChange={(e)=>setSelected({...selected, name: e.target.value})} className="border p-2 w-full" />
-          <label className="block mt-1">Role</label>
-          <select value={selected.role || "user"} onChange={(e)=>setSelected({...selected, role:e.target.value})} className="border p-2 w-full">
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-          <div className="mt-3">
-            <button onClick={save} className="bg-green-600 text-white px-3 py-1 rounded">Save</button>
-            <button onClick={()=>{setEditing(false); setSelected(null);}} className="ml-2 bg-gray-300 px-3 py-1 rounded">Cancel</button>
+      {!editing ? (
+        <div>
+          <div className="mb-3">
+            <strong>Email:</strong> {admin.email}
           </div>
+          <div className="mb-3">
+            <strong>Name:</strong> {admin.name || "Not provided"}
+          </div>
+          <div className="mb-3">
+            <strong>Phone:</strong> {admin.phone || "Not provided"}
+          </div>
+          <div className="mb-3">
+            <strong>Role:</strong> {admin.role || "admin"}
+          </div>
+          <button
+            onClick={() => setEditing(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          >
+            Edit Profile
+          </button>
+        </div>
+      ) : (
+        <div>
+          <label className="block mb-1 font-semibold">Name</label>
+          <input
+            type="text"
+            value={admin.name || ""}
+            onChange={(e) => setAdmin({ ...admin, name: e.target.value })}
+            className="border p-2 rounded w-full mb-3"
+          />
+
+          <label className="block mb-1 font-semibold">Phone</label>
+          <input
+            type="text"
+            value={admin.phone || ""}
+            onChange={(e) => setAdmin({ ...admin, phone: e.target.value })}
+            className="border p-2 rounded w-full mb-3"
+          />
+
+          <button
+            onClick={saveChanges}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+          >
+            Save Changes
+          </button>
+          <button
+            onClick={() => setEditing(false)}
+            className="ml-2 bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 transition"
+          >
+            Cancel
+          </button>
         </div>
       )}
     </div>
-  )
+  );
 }

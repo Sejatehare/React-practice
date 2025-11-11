@@ -1,4 +1,3 @@
-// src/pages/admin/AdminDashboard.jsx
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts, createProduct } from "../../store/productSlice";
@@ -42,7 +41,7 @@ export default function AdminDashboard() {
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-4">Products</h2>
 
-      {/* Add Product Section */}
+      
       <div className="bg-white p-4 rounded mb-6 shadow">
         <h3 className="font-semibold mb-2">Add Product</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -53,7 +52,7 @@ export default function AdminDashboard() {
             className="border p-2 rounded"
           />
 
-          {/* Category dropdown */}
+          
           <select
             value={newP.category}
             onChange={(e) => setNewP({ ...newP, category: e.target.value })}
@@ -104,7 +103,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Product List */}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {items.map((p) => (
           <div key={p.id} className="bg-white p-3 rounded shadow">

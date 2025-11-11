@@ -1,42 +1,36 @@
 @import "tailwindcss";
 
-/* Import Google font */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
 
 :root {
-  --primary: #0ea5a4;       /* teal-ish */
+  --primary: #0ea5a4;       
   --primary-dark: #0b8b89;
-  --accent: #7c3aed;        /* purple accent */
-  --bg: rgba(248, 250, 252, 0.85); /* translucent overlay for readability */
+  --accent: #7c3aed;       
+  --bg: rgba(248, 250, 252, 0.85); 
   --card: #ffffff;
   --muted: #6b7280;
   --radius: 12px;
 }
 
-/* Global layout */
 html, body, #root {
   height: 100%;
   font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   color: #0f172a;
   
-  /* 🌄 Add your background image here */
   background-image: url("https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8yNl9pbGx1c3RyYXRpb25fb2ZfZ2lsdHRlcl9fbHV4dXJ5X19nb2xkX2NvbG9yX185OTM4OTczOC1kZTMzLTQwMjAtYWQ1Mi0wNDM5MzIyN2MwZGZfMS5qcGc.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
 
-  /* Optional subtle overlay to make text readable */
   background-color: var(--bg);
-  background-blend-mode: lighten; /* try 'overlay' or 'soft-light' for other effects */
+  background-blend-mode: lighten; 
 }
 
-/* Custom helper classes */
 .bg-primary { background: var(--primary); }
 .bg-primary-dark { background: var(--primary-dark); }
 .bg-accent { background: var(--accent); }
 
-/* Buttons */
 .btn-primary {
   background: var(--primary);
   color: white;

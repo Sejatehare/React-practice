@@ -1,4 +1,3 @@
-// src/pages/auth/AuthPage.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
@@ -17,7 +16,6 @@ export default function AuthPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // ---------------- SIGNUP ----------------
   const handleSignup = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -34,7 +32,6 @@ export default function AuthPage() {
     }
   };
 
-  // ---------------- LOGIN ----------------
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -70,7 +67,6 @@ export default function AuthPage() {
     }
   };
 
-  // ---------------- FORGOT PASSWORD ----------------
   const handleForgot = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -86,7 +82,6 @@ export default function AuthPage() {
     }
   };
 
-  // ---------------- UI ----------------
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-300 via-silver-950 to-orange-100 p-4">
       <div className="w-full max-w-md bg-white/90 backdrop-blur-lg p-8 rounded-2xl shadow-2xl transition-all duration-300">
@@ -98,7 +93,6 @@ export default function AuthPage() {
             : "Reset Your Password ✉️"}
         </h1>
 
-        {/* Mode switch */}
         <div className="flex justify-between mb-6">
           {["login", "signup", "forgot"].map((m) => (
             <button
@@ -119,7 +113,6 @@ export default function AuthPage() {
           ))}
         </div>
 
-        {/* ---------------- SIGNUP ---------------- */}
         {mode === "signup" && (
           <form onSubmit={handleSignup} className="space-y-4">
             <input
@@ -158,7 +151,6 @@ export default function AuthPage() {
           </form>
         )}
 
-        {/* ---------------- LOGIN ---------------- */}
         {mode === "login" && (
           <form onSubmit={handleLogin} className="space-y-4">
             <input
@@ -209,7 +201,6 @@ export default function AuthPage() {
           </form>
         )}
 
-        {/* ---------------- FORGOT ---------------- */}
         {mode === "forgot" && (
           <form onSubmit={handleForgot} className="space-y-4">
             <input

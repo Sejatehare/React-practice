@@ -45,7 +45,7 @@ export default function HomePage() {
           Welcome, {user.email?.split("@")?.[0] || "Guest"}!
         </h2>
         <p className="text-gray-600 mb-6">
-          Discover our curated jewelry collection.
+          Discover our trendy & classic jewelry collection
         </p>
         <Link
           to="/user/products"
@@ -53,9 +53,6 @@ export default function HomePage() {
         >
           Browse All Products
         </Link>
-        <p className="text-gray-600 text-lg py-6">
-          Explore our exclusive collections by category
-        </p>
       </div>
 
       {/* Categories Grid */}

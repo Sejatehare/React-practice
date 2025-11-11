@@ -1,10 +1,8 @@
-// src/App.jsx
 import "./App.css";
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "./pages/AuthPage";
 
-// User layout + pages
 import UserLayout from "./pages/user/UserLayout";
 import HomePage from "./pages/user/HomePage";
 import ProductList from "./pages/user/ProductList";
@@ -15,7 +13,6 @@ import UserOrders from "./pages/user/UserOrders";
 import ProfilePage from "./pages/user/ProfilePage";
 import AboutUs from "./pages/user/AboutUs";
 
-// Admin layout + pages
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProductDetails from "./pages/admin/AdminProductDetails";
@@ -33,7 +30,7 @@ export default function App() {
       <Route path="/" element={<Navigate to="/auth" replace />} />
       <Route path="/auth" element={<AuthPage />} />
 
-      {/* USER: layout keeps navbar persistent */}
+      
       <Route path="/user" element={<UserLayout />}>
         <Route index element={<HomePage />} />
         <Route path="home" element={<HomePage />} />
@@ -47,7 +44,7 @@ export default function App() {
         <Route path="wishlist" element={<WishlistPage />} />
       </Route>
 
-      {/* ADMIN: protected */}
+      
       <Route
         path="/admin/*"
         element={

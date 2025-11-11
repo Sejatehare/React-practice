@@ -1,4 +1,3 @@
-// src/api/authAPI.js
 import axios from "axios";
 
 const API_KEY = "AIzaSyCS78u_o-JeNbkUlxgnGzjAAE1fREGlC3c";
@@ -10,7 +9,7 @@ export async function signup(email, password) {
     password,
     returnSecureToken: true,
   });
-  return resp.data; // contains idToken, localId, etc.
+  return resp.data; 
 }
 
 export async function login(email, password) {
@@ -30,4 +29,3 @@ export async function sendPasswordReset(email) {
   return resp.data;
 }
 
-/* optional: verify id token - usually server side required; not included here */

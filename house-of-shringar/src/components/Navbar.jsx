@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -28,7 +27,6 @@ export default function Navbar() {
             <Link to="/user/home" className="text-xl font-bold text-gray-800">
               HOUSE OF SHRINGAR
             </Link>
-            <div className="text-sm text-gray-500">Fine Jewelry</div>
           </div>
         </div>
 
@@ -48,7 +46,6 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="text-sm text-gray-600 hidden sm:block">{user.email}</div>
             <button
               onClick={() => navigate("/user/cart")}
               className="bg-pink-500 text-white px-3 py-1 rounded"

@@ -8,7 +8,6 @@ export default function AdminCategories() {
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState("");
 
-  // Fetch categories from Firebase
   useEffect(() => {
     const categoriesRef = ref(database, "categories");
     const unsubscribe = onValue(categoriesRef, (snapshot) => {
@@ -26,7 +25,6 @@ export default function AdminCategories() {
     return () => unsubscribe();
   }, []);
 
-  // Add new category
   const handleAdd = async () => {
     if (!name.trim()) {
       alert("Please enter a category name!");
@@ -42,7 +40,6 @@ export default function AdminCategories() {
     }
   };
 
-  // Delete category
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
     try {
@@ -54,19 +51,16 @@ export default function AdminCategories() {
     }
   };
 
-  // Start editing a category
   const startEditing = (id, currentName) => {
     setEditingId(id);
     setEditingName(currentName);
   };
 
-  // Cancel editing
   const cancelEditing = () => {
     setEditingId(null);
     setEditingName("");
   };
 
-  // Save edited category
   const handleUpdate = async () => {
     if (!editingName.trim()) {
       alert("Category name cannot be empty!");
@@ -87,7 +81,6 @@ export default function AdminCategories() {
     <div className="p-6 max-w-3xl mx-auto">
       <h2 className="text-2xl font-semibold mb-4">Manage Categories</h2>
 
-      {/* Add Category */}
       <div className="flex gap-3 mb-6">
         <input
           type="text"
@@ -104,7 +97,6 @@ export default function AdminCategories() {
         </button>
       </div>
 
-      {/* Category List */}
       {categories.length === 0 ? (
         <div className="text-gray-500">No categories found.</div>
       ) : (

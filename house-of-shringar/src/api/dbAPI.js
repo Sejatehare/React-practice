@@ -1,19 +1,13 @@
-// src/api/dbAPI.js
 import axios from "axios";
 
-// ✅ Firebase Realtime Database URL (exact value from Firebase console)
 const DB_URL = "https://e-commerce-bd80c-default-rtdb.firebaseio.com/";
 
-// helper to build URL with optional token
 function dbUrl(path = "", token) {
   const base = DB_URL.replace(/\/$/, "");
   if (token) return `${base}/${path}.json?auth=${token}`;
   return `${base}/${path}.json`;
 }
 
-/* ========================================================================== */
-/* USERS                                                                     */
-/* ========================================================================== */
 export async function setUserInDB(uid, userObj, token) {
   try {
     const url = dbUrl(`users/${uid}`, token);
@@ -47,9 +41,6 @@ export async function getAllUsers(token) {
   }
 }
 
-/* ========================================================================== */
-/* PRODUCTS                                                                  */
-/* ========================================================================== */
 export async function fetchProducts() {
   try {
     const url = dbUrl("products");
@@ -96,9 +87,6 @@ export async function deleteProduct(id) {
   }
 }
 
-/* ========================================================================== */
-/* CATEGORIES                                                                */
-/* ========================================================================== */
 export async function fetchCategories() {
   try {
     const url = dbUrl("categories");
@@ -145,9 +133,7 @@ export async function updateCategory(id, updatedData) {
   }
 }
 
-/* ========================================================================== */
-/* ORDERS                                                                    */
-/* ========================================================================== */
+
 export async function fetchOrders() {
   try {
     const url = dbUrl("orders");
@@ -161,10 +147,7 @@ export async function fetchOrders() {
   }
 }
 
-/**
- * placeOrder(order)
- * order should include: userId, userEmail, items[], totalAmount, address, paymentMethod
- */
+
 export async function placeOrder(order) {
   try {
     const orderWithMeta = {
@@ -174,7 +157,6 @@ export async function placeOrder(order) {
     };
     const url = dbUrl("orders");
     const res = await axios.post(url, orderWithMeta);
-    // firebase returns { name: "-Mabc123" } where name is the generated key
     return { id: res.data.name, ...orderWithMeta };
   } catch (err) {
     console.error("placeOrder error:", err.response?.data || err.message);
@@ -193,11 +175,7 @@ export async function updateOrder(id, updatedData) {
   }
 }
 
-/**
- * fetchUserOrders(uid)
- * Convenience function to fetch and return only orders that belong to the given user id
- * (It fetches all orders then filters client-side; fine for small datasets.)
- */
+
 export async function fetchUserOrders(uid) {
   try {
     const all = await fetchOrders();
@@ -208,23 +186,12 @@ export async function fetchUserOrders(uid) {
   }
 }
 
-/* ========================================================================== */
-/* WISHLIST                                                                  */
-/* ========================================================================== */
-/**
- * Wishlist structure:
- * /wishlist/{userId}/{productId} : productObject
- */
 
-/**
- * addToWishlist(userId, product)
- * product must include an `id` field
- */
 export async function addToWishlist(userId, product) {
   try {
     if (!userId) throw new Error("Missing userId");
     const url = dbUrl(`wishlist/${userId}/${product.id}`);
-    await axios.put(url, product); // put so key is product.id
+    await axios.put(url, product); 
     return product;
   } catch (err) {
     console.error("addToWishlist error:", err.response?.data || err.message);

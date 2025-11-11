@@ -1,4 +1,3 @@
-// src/components/ProductCard.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ref, set, remove } from "firebase/database";
@@ -10,7 +9,7 @@ export default function ProductCard({ product, wishlist = [], userId }) {
   const isWishlisted = wishlist?.some((p) => p.id === product.id);
 
   const toggleWishlist = async (e) => {
-    e.stopPropagation(); // prevent opening product page
+    e.stopPropagation();
     if (!userId) {
       alert("Please login to use wishlist!");
       return;

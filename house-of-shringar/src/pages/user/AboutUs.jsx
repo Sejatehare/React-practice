@@ -40,7 +40,7 @@ export default function AboutUs() {
         setIndex((prev) => (prev + 1) % locations.length);
         setFade(true);
       }, 500); // fade out, switch, fade in
-    }, 2000);
+    }, 1500);
     return () => clearInterval(interval);
   }, [paused]);
 
