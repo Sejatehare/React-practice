@@ -222,3 +222,30 @@ export async function fetchWishlist(userId) {
     throw err;
   }
 }
+
+export async function submitProductRating(productId, rating) {
+  const productUrl = dbUrl(`products/${productId}`);
+  const res = await axios.get(productUrl);
+  const product = res.data;
+
+  const oldRating = product.rating || 0;
+  const oldCount = product.ratingCount || 0;
+
+  const newCount = oldCount + 1;
+  const newRating =
+    ((oldRating * oldCount) + rating) / newCount;
+
+  await axios.patch(productUrl, {
+    rating: Number(newRating.toFixed(1)),
+    ratingCount: newCount
+  });
+}
+
+export async function markOrderItemRated(orderId, productId) {
+  const url = dbUrl(`orders/${orderId}/items`);
+  const res = await axios.get(url);
+  const items = res.data.map(it =>
+    it.id === productId ? { ...it, rated: true } : it
+  );
+  await axios.put(url, items);
+}

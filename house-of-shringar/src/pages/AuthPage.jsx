@@ -187,17 +187,6 @@ export default function AuthPage() {
             >
               {loading ? "Logging..." : "Login"}
             </button>
-
-            <p className="text-sm mt-2 text-center">
-              Forgot password?{" "}
-              <button
-                type="button"
-                onClick={() => setMode("forgot")}
-                className="text-indigo-600 hover:underline"
-              >
-                Reset
-              </button>
-            </p>
           </form>
         )}
 

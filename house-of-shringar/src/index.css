@@ -17,14 +17,14 @@ html, body, #root {
   font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   color: #0f172a;
   
-  background-image: url("https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8yNl9pbGx1c3RyYXRpb25fb2ZfZ2lsdHRlcl9fbHV4dXJ5X19nb2xkX2NvbG9yX185OTM4OTczOC1kZTMzLTQwMjAtYWQ1Mi0wNDM5MzIyN2MwZGZfMS5qcGc.jpg");
+  background-image: url("https://t4.ftcdn.net/jpg/04/61/64/03/360_F_461640394_BV826V3swX4LLKkAYFth7axv0Mlv5bDt.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
 
   background-color: var(--bg);
-  background-blend-mode: lighten; 
+  background-blend-mode: luminosity; 
 }
 
 .bg-primary { background: var(--primary); }
