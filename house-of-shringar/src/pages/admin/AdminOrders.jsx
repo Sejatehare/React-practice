@@ -35,7 +35,7 @@ export default function AdminOrders() {
           {orders.map((order) => (
             <div
               key={order.id}
-              className="bg-white rounded-xl shadow-md p-6 border border-gray-100 hover:shadow-lg transition-all duration-300"
+              className="card p-4 fade-up border border-gray-100 hover:shadow-lg transition-all duration-300"
             >
               {/* 🧾 Order Header */}
               <div className="flex flex-col md:flex-row md:justify-between md:items-center border-b pb-3 mb-5">

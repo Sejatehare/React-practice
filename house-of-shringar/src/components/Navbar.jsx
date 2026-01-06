@@ -4,7 +4,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 export default function Navbar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user")) || {};
 
   const navItems = [
     { name: "Home", to: "/user/home" },
@@ -20,45 +19,53 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-yellow-50 shadow sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div>
-            <Link to="/user/home" className="text-xl font-bold text-gray-800">
-              HOUSE OF SHRINGAR
-            </Link>
-          </div>
-        </div>
+    <nav className="sticky top-0 z-50 bg-gradient-to-r from-red-900 via-red-700 to-pink-900 shadow-lg">
+      <div className="w-full px-6 py-3 flex items-center justify-between">
+        
+        {/* LOGO */}
+        <Link
+          to="/user/home"
+          className="text-white text-xl font-extrabold tracking-wide"
+        >
+          HOUSE OF SHRINGAR
+        </Link>
 
-        <div className="flex items-center gap-6">
-          <div className="hidden md:flex gap-4">
-            {navItems.map((n) => (
+        {/* LINKS */}
+        <div className="hidden md:flex gap-6">
+          {navItems.map((n) => {
+            const active = pathname === n.to;
+            return (
               <Link
                 key={n.to}
                 to={n.to}
-                className={`px-2 py-1 hover:text-pink-500 ${
-                  pathname === n.to ? "text-pink-500 font-semibold" : "text-gray-700"
-                }`}
+                className={`relative text-sm font-medium transition-all duration-300
+                  ${
+                    active
+                      ? "text-white after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-white"
+                      : "text-white/80 hover:text-white"
+                  }`}
               >
                 {n.name}
               </Link>
-            ))}
-          </div>
+            );
+          })}
+        </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/user/cart")}
-              className="bg-pink-500 text-white px-3 py-1 rounded"
-            >
-              Cart
-            </button>
-            <button
-              onClick={handleLogout}
-              className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded"
-            >
-              Logout
-            </button>
-          </div>
+        {/* ACTIONS */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate("/user/cart")}
+            className="bg-black/20 text-white font-semibold px-4 py-1.5 rounded-md shadow hover:bg-gray-100 transition"
+          >
+            Cart
+          </button>
+
+          <button
+            onClick={handleLogout}
+            className="bg-black/20 text-white px-4 py-1.5 rounded-md hover:bg-black/30 transition"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </nav>

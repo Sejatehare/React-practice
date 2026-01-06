@@ -104,7 +104,7 @@ export default function AdminCategories() {
           {categories.map((c) => (
             <li
               key={c.id}
-              className="flex justify-between items-center bg-white rounded shadow p-3"
+              className="flex justify-between items-center card p-4 fade-up"
             >
               {editingId === c.id ? (
                 <div className="flex w-full gap-3 items-center">

@@ -5,7 +5,7 @@ export default function RatingModal({ onClose, onSubmit }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-xl w-80">
+      <div className="card p-4 fade-up w-80">
         <h3 className="text-lg font-semibold mb-4">Rate this product</h3>
 
         <div className="flex justify-center gap-2 text-2xl text-yellow-400 mb-6">

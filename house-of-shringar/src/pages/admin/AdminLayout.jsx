@@ -5,7 +5,7 @@ import AdminNavbar from "../../components/AdminNavbar";
 
 export default function AdminLayout() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-red-100 to-purple-200">
+    <div className="min-h-screen bg-gradient-to-r from-red-50 via-gray-100 to-red-50">
       <AdminNavbar />
       <main className="p-6">
         <Outlet />

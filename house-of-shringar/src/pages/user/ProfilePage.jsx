@@ -72,7 +72,7 @@ export default function ProfilePage() {
     <div className="max-w-2xl mx-auto p-6">
       <h2 className="text-2xl font-semibold mb-4">My Profile</h2>
 
-      <div className="bg-white p-6 rounded shadow">
+      <div className="card p-4 fade-up">
         {!editing ? (
           <>
             <div className="mb-2"><b>Name:</b> {profile.name || "—"}</div>

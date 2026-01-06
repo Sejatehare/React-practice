@@ -40,7 +40,7 @@ export default function AdminProfile() {
   if (!admin) return <div className="p-6 text-center">Loading admin details...</div>;
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow">
+    <div className="max-w-3xl mx-auto card p-4 fade-up">
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Admin Profile</h2>
 
       {!editing ? (

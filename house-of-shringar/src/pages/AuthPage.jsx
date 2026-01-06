@@ -84,7 +84,7 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-300 via-silver-950 to-orange-100 p-4">
-      <div className="w-full max-w-md bg-white/90 backdrop-blur-lg p-8 rounded-2xl shadow-2xl transition-all duration-300">
+      <div className="w-full max-w-md card p-4 fade-up backdrop-blur-lg transition-all duration-300">
         <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
           {mode === "login"
             ? "Welcome Back 👋"

@@ -42,7 +42,7 @@ export default function AdminDashboard() {
       <h2 className="text-2xl font-semibold mb-4">Products</h2>
 
       
-      <div className="bg-white p-4 rounded mb-6 shadow">
+      <div className="card p-4 fade-up mb-6">
         <h3 className="font-semibold mb-2">Add Product</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
           <input
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {items.map((p) => (
-          <div key={p.id} className="bg-white p-3 rounded shadow">
+          <div key={p.id} className="card p-4 fade-up">
             <img
               src={p.image || "/no-image.jpg"}
               alt={p.name}

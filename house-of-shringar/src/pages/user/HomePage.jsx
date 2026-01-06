@@ -158,7 +158,7 @@ export default function HomePage() {
               <div
                 key={prod.id}
                 onClick={() => navigate(`/user/product/${prod.id}`)}
-                className="relative bg-white rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer p-4 group"
+                className="relative card p-4 fade-up hover:shadow-xl transition cursor-pointer group"
               >
                 {/* 🔥 Badge */}
                 <span className="absolute top-3 left-3 bg-pink-500 text-white text-xs px-3 py-1 rounded-full">

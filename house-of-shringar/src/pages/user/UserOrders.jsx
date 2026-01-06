@@ -76,8 +76,8 @@ function OrderModal({ order, onClose, productsMap, onRateClick }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 modal-backdrop">
+      <div className="card w-full max-w-2xl p-6 max-h-[80vh] overflow-auto fade-up">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-semibold">Order #{order.id}</h3>
           <button onClick={onClose} className="text-red-600 font-semibold">
@@ -258,7 +258,7 @@ export default function UserOrders() {
       {orders.map((o) => (
         <div
           key={o.id}
-          className="bg-white p-4 rounded shadow mb-4 flex items-center justify-between gap-4"
+          className="card p-4 mb-4 flex items-center justify-between gap-4 fade-up"
         >
           {/* LEFT */}
           <div>

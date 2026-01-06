@@ -58,7 +58,7 @@ export default function AdminAddProduct() {
     <div className="p-6 max-w-2xl mx-auto">
       <h2 className="text-2xl font-semibold mb-4">Add New Product</h2>
 
-      <form onSubmit={handleAdd} className="space-y-4 bg-white p-6 rounded-lg shadow">
+      <form onSubmit={handleAdd} className="space-y-4 card p-4 fade-up shadow">
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}

@@ -45,7 +45,7 @@ export default function Category() {
   };
 
   return (
-    <div className="mb-6 p-4 bg-white rounded shadow-md">
+    <div className="mb-6 p-4 card p-4 fade-up">
       <div className="flex items-center justify-between">
         <h2 className="font-semibold mb-2 text-gray-700">Manage Categories</h2>
         {loading && <small className="text-sm text-gray-400">loading...</small>}

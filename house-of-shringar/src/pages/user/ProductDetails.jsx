@@ -29,7 +29,7 @@ export default function ProductDetails() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded shadow mt-6">
+    <div className="max-w-4xl mx-auto card p-4 fade-up mt-6">
       <div className="md:flex gap-6">
         <div className="md:w-1/2">
           <img src={product.image || "/no-image.jpg"} alt={product.name} className="w-full h-96 object-cover rounded" />

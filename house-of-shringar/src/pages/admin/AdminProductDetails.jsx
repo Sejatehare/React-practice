@@ -52,7 +52,7 @@ export default function AdminProductDetails() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded shadow">
+    <div className="max-w-3xl mx-auto p-6 card p-4 fade-up">
       <h2 className="text-2xl font-semibold mb-4">Edit Product</h2>
 
       <label className="block mb-2 font-medium">Product Name</label>

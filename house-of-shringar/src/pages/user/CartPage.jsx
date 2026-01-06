@@ -17,7 +17,7 @@ export default function CartPage() {
 
       <div className="space-y-4">
         {items.map((it) => (
-          <div key={it.id} className="flex items-center gap-4 bg-white p-3 rounded shadow">
+          <div key={it.id} className="flex items-center gap-4 card p-4 fade-up">
             <img src={it.image || "/no-image.jpg"} alt={it.name} className="w-20 h-20 object-cover rounded" />
             <div className="flex-1">
               <h3 className="font-semibold">{it.name}</h3>

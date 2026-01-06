@@ -32,7 +32,7 @@ export default function ProductCard({ product, wishlist = [], userId }) {
 
   return (
     <div
-      className="bg-white rounded-lg shadow overflow-hidden cursor-pointer hover:shadow-lg transition"
+      className="card p-4 fade-up overflow-hidden cursor-pointer hover:shadow-lg transition"
       onClick={() => navigate(`/user/product/${product.id}`)}
     >
       <img

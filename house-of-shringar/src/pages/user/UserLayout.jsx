@@ -5,7 +5,7 @@ import Navbar from "../../components/Navbar";
 
 export default function UserLayout() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-200 via-violet-100 to-purple-200">
+    <div className="min-h-screen bg-gradient-to-r from-red-50 via-red-100 to-red-50">
       <Navbar />
       <main>
         <Outlet />

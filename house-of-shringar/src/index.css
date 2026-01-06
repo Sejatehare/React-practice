@@ -1,44 +1,145 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-
+/* ================= DESIGN TOKENS ================= */
 :root {
-  --primary: #0ea5a4;       
-  --primary-dark: #0b8b89;
-  --accent: #7c3aed;       
-  --bg: rgba(248, 250, 252, 0.85); 
+  --primary: #2563eb;        /* Royal Blue */
+  --primary-dark: #1e40af;
+  --accent: #7c3aed;         /* Violet */
+  --success: #16a34a;
+  --danger: #dc2626;
+
+  --bg-main: #f8fafc;
+  --bg-soft: #f1f5f9;
   --card: #ffffff;
-  --muted: #6b7280;
-  --radius: 12px;
+
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+
+  --radius: 14px;
+  --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.08);
+  --shadow-hover: 0 16px 35px rgba(15, 23, 42, 0.15);
 }
 
-html, body, #root {
+/* ================= GLOBAL RESET ================= */
+html,
+body,
+#root {
   height: 100%;
-  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  color: #0f172a;
-  
-  background-image: url("https://t4.ftcdn.net/jpg/04/61/64/03/360_F_461640394_BV826V3swX4LLKkAYFth7axv0Mlv5bDt.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-
-  background-color: var(--bg);
-  background-blend-mode: luminosity; 
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  scroll-behavior: smooth;
 }
 
-.bg-primary { background: var(--primary); }
-.bg-primary-dark { background: var(--primary-dark); }
-.bg-accent { background: var(--accent); }
+/* ================= UTILITIES ================= */
+.bg-card {
+  background-color: var(--card);
+}
 
+.text-muted {
+  color: var(--text-muted);
+}
+
+/* ================= BUTTONS ================= */
 .btn-primary {
-  background: var(--primary);
-  color: white;
-  padding: 0.5rem 0.9rem;
-  border-radius: 8px;
-  transition: background 0.3s ease;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
-  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+
+.btn-secondary {
+  background: var(--bg-soft);
+  color: var(--text-main);
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+/* ================= CARDS ================= */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  transition: all 0.35s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* ================= MODALS ================= */
+.modal-backdrop {
+  backdrop-filter: blur(6px);
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.4s ease forwards;
+}
+
+/* ================= NAVBAR ================= */
+.navbar {
+  background: linear-gradient(135deg, #1e40af, #7c3aed);
+  color: white;
+  height: 64px;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8px 30px rgba(30, 64, 175, 0.35);
+}
+
+.navbar-admin {
+  background: linear-gradient(135deg, #020617, #0f172a);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* ================= PAGE BACKGROUNDS ================= */
+.page-user {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8fafc, #eef2ff);
+  padding-top: 1.5rem;
+}
+
+.page-admin {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #020617, #0f172a);
+  color: #e5e7eb;
+  padding-top: 1.5rem;
 }
