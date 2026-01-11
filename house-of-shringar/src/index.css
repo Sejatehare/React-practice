@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 
-/* ================= DESIGN TOKENS ================= */
 :root {
   --primary: #2563eb;        /* Royal Blue */
   --primary-dark: #1e40af;
@@ -21,7 +20,6 @@
   --shadow-hover: 0 16px 35px rgba(15, 23, 42, 0.15);
 }
 
-/* ================= GLOBAL RESET ================= */
 html,
 body,
 #root {
@@ -32,7 +30,6 @@ body,
   scroll-behavior: smooth;
 }
 
-/* ================= UTILITIES ================= */
 .bg-card {
   background-color: var(--card);
 }
@@ -41,7 +38,6 @@ body,
   color: var(--text-muted);
 }
 
-/* ================= BUTTONS ================= */
 .btn-primary {
   background: linear-gradient(135deg, var(--primary), var(--accent));
   color: #fff;
@@ -68,7 +64,6 @@ body,
   background: #e2e8f0;
 }
 
-/* ================= CARDS ================= */
 .card {
   background: var(--card);
   border-radius: var(--radius);
@@ -81,12 +76,10 @@ body,
   box-shadow: var(--shadow-hover);
 }
 
-/* ================= MODALS ================= */
 .modal-backdrop {
   backdrop-filter: blur(6px);
 }
 
-/* ================= ANIMATIONS ================= */
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -102,7 +95,6 @@ body,
   animation: fadeUp 0.4s ease forwards;
 }
 
-/* ================= NAVBAR ================= */
 .navbar {
   background: linear-gradient(135deg, #1e40af, #7c3aed);
   color: white;
@@ -130,7 +122,6 @@ body,
   transform: translateY(-1px);
 }
 
-/* ================= PAGE BACKGROUNDS ================= */
 .page-user {
   min-height: 100vh;
   background: linear-gradient(180deg, #f8fafc, #eef2ff);

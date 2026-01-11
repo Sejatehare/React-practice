@@ -21,12 +21,10 @@ export default function AdminNavbar() {
     <nav className="sticky top-0 z-50 bg-gradient-to-r from-slate-900 to-slate-800 shadow-xl">
       <div className="w-full px-6 py-3 flex justify-between items-center">
         
-        {/* TITLE */}
         <div className="text-lg font-bold tracking-wide text-white">
           Admin Panel
         </div>
 
-        {/* LINKS */}
         <div className="flex gap-4 items-center">
           <Link to="/admin" className={navItemClass("/admin")}>
             Products

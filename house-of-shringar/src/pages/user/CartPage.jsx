@@ -1,4 +1,3 @@
-// src/pages/user/CartPage.jsx
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateQty, removeFromCart } from "../../store/cartSlice";

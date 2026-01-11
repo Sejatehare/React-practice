@@ -9,7 +9,6 @@ import {
 } from "../../api/dbAPI";
 import jsPDF from "jspdf";
 
-/* ================= ORDER MODAL ================= */
 function OrderModal({ order, onClose, productsMap, onRateClick }) {
   const [customerPhone, setCustomerPhone] = useState("");
   const [adminPhone, setAdminPhone] = useState("");
@@ -157,7 +156,6 @@ function OrderModal({ order, onClose, productsMap, onRateClick }) {
   );
 }
 
-/* ================= USER ORDERS ================= */
 export default function UserOrders() {
   const storedUser = JSON.parse(localStorage.getItem("user")) || {};
 
@@ -173,7 +171,6 @@ export default function UserOrders() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  /* Load products */
   useEffect(() => {
     (async () => {
       const prods = await fetchProducts();
@@ -183,7 +180,6 @@ export default function UserOrders() {
     })();
   }, []);
 
-  /* Load orders */
   useEffect(() => {
     if (!uid) return;
 
@@ -260,7 +256,6 @@ export default function UserOrders() {
           key={o.id}
           className="card p-4 mb-4 flex items-center justify-between gap-4 fade-up"
         >
-          {/* LEFT */}
           <div>
             <div className="font-semibold">
               Order #{o.id}
@@ -270,7 +265,6 @@ export default function UserOrders() {
             </div>
           </div>
 
-          {/* MIDDLE – IMAGES */}
           <div className="flex gap-2">
             {o.items?.slice(0, 3).map((item) => (
               <img
@@ -287,7 +281,6 @@ export default function UserOrders() {
             )}
           </div>
 
-          {/* RIGHT */}
           <div className="text-right">
             <div className="font-semibold mb-1">
               ₹{o.totalAmount}

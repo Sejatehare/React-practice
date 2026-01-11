@@ -1,4 +1,3 @@
-// src/pages/admin/AdminProfile.jsx
 import React, { useEffect, useState } from "react";
 import { getUserFromDB, setUserInDB } from "../../api/dbAPI";
 
@@ -7,7 +6,6 @@ export default function AdminProfile() {
   const [admin, setAdmin] = useState(null);
   const [editing, setEditing] = useState(false);
 
-  // 🔹 Fetch current admin details
   useEffect(() => {
     (async () => {
       try {
@@ -20,7 +18,6 @@ export default function AdminProfile() {
     })();
   }, [user.userId]);
 
-  // 🔹 Save updated details
   const saveChanges = async () => {
     try {
       await setUserInDB(admin.uid, {

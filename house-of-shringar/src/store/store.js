@@ -1,8 +1,7 @@
-// src/store/store.js
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "./authSlice"; // if you have
+import authReducer from "./authSlice"; 
 import productsReducer from "./productSlice";
-import categoryReducer from "./categorySlice"; // if present
+import categoryReducer from "./categorySlice";
 import cartReducer from "./cartSlice";
 import orderReducer from "./orderSlice";
 

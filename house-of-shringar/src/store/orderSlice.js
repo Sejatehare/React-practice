@@ -1,4 +1,3 @@
-// src/store/orderSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchOrders, placeOrder, updateOrder } from "../api/dbAPI";
 

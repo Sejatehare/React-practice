@@ -1,4 +1,3 @@
-// src/pages/admin/AdminOrders.jsx
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrders, setOrder } from "../../store/orderSlice";
@@ -37,7 +36,6 @@ export default function AdminOrders() {
               key={order.id}
               className="card p-4 fade-up border border-gray-100 hover:shadow-lg transition-all duration-300"
             >
-              {/* 🧾 Order Header */}
               <div className="flex flex-col md:flex-row md:justify-between md:items-center border-b pb-3 mb-5">
                 <div>
                   <h3 className="font-semibold text-lg text-gray-800">
@@ -67,7 +65,6 @@ export default function AdminOrders() {
                 </div>
               </div>
 
-              {/* 🛍️ Order Items */}
               <div className="space-y-4">
                 {order.items?.map((item, idx) => (
                   <div
@@ -95,7 +92,6 @@ export default function AdminOrders() {
                 ))}
               </div>
 
-              {/* 💳 Order Summary */}
               <div className="mt-5 bg-gray-50 rounded-lg p-4 text-sm text-gray-700 leading-relaxed">
                 <p>
                   <strong>Total Amount:</strong>{" "}

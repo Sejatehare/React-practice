@@ -1,4 +1,3 @@
-// src/store/productSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchProducts, addProduct, updateProduct, deleteProduct } from "../api/dbAPI";
 

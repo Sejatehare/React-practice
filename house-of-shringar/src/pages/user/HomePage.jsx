@@ -50,7 +50,7 @@ export default function HomePage() {
         const products = await fetchProducts();
 
         const ranked = products
-          .filter(p => p.rating) // only rated products
+          .filter(p => p.rating)
           .sort((a, b) => {
             if (b.rating !== a.rating) return b.rating - a.rating;
             return (b.ratingCount || 0) - (a.ratingCount || 0);
@@ -66,7 +66,6 @@ export default function HomePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
-      {/* ================= HERO SECTION ================= */}
       <div className="relative h-[80vh] rounded-3xl overflow-hidden mb-20 shadow-xl">
         <img
           src="https://i.pinimg.com/736x/db/08/ac/db08ac5800b059e978a553befb885b62.jpg"
@@ -99,7 +98,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ================= CATEGORIES ================= */}
       <h2 className="text-3xl font-bold text-center mb-10">
         Shop by Category
       </h2>
@@ -142,7 +140,6 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* ================= BEST SELLERS ================= */}
       <div className="mt-24">
         <h2 className="text-3xl font-bold text-center mb-12">
           Best Sellers
@@ -160,7 +157,6 @@ export default function HomePage() {
                 onClick={() => navigate(`/user/product/${prod.id}`)}
                 className="relative card p-4 fade-up hover:shadow-xl transition cursor-pointer group"
               >
-                {/* 🔥 Badge */}
                 <span className="absolute top-3 left-3 bg-pink-500 text-white text-xs px-3 py-1 rounded-full">
                   Best Seller
                 </span>
@@ -175,7 +171,6 @@ export default function HomePage() {
                   {prod.name}
                 </h3>
 
-                {/* ⭐ Rating */}
                 <div className="flex items-center gap-2 mt-1">
                   <StarRating rating={prod.rating} />
                   <span className="text-sm text-gray-500">
@@ -203,7 +198,6 @@ export default function HomePage() {
       </div>
 
 
-      {/* ================= TRUST SECTION ================= */}
       <div className="mt-28 bg-gray-50 rounded-3xl py-14 px-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 text-center">
           <div>

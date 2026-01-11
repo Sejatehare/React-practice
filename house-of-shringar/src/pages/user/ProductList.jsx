@@ -15,12 +15,10 @@ export default function ProductList() {
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const userId = user?.userId;
 
-  // ✅ Get category from query params (for when user clicks category block)
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const categoryFromQuery = queryParams.get("category");
 
-  // ✅ Fetch products & categories
   useEffect(() => {
     (async () => {
       try {
@@ -38,12 +36,10 @@ export default function ProductList() {
     })();
   }, []);
 
-  // ✅ Set category automatically when navigated from HomePage
   useEffect(() => {
     if (categoryFromQuery) setCat(categoryFromQuery);
   }, [categoryFromQuery]);
 
-  // ✅ Load user's wishlist
   useEffect(() => {
     if (!userId) return;
     const wishRef = ref(database, `wishlists/${userId}`);
@@ -54,7 +50,6 @@ export default function ProductList() {
     return () => unsubscribe();
   }, [userId]);
 
-  // ✅ Filter products
   const filtered = products.filter((pr) => {
     const matchesCat = cat
       ? pr.category?.toLowerCase() === cat.toLowerCase()
@@ -65,7 +60,6 @@ export default function ProductList() {
 
   return (
     <div className="max-w-7xl mx-auto p-6">
-      {/* 🔍 Filter bar */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6 items-center">
         <input
           className="border p-2 rounded w-full"
@@ -87,7 +81,6 @@ export default function ProductList() {
         </select>
       </div>
 
-      {/* 🛍️ Product grid or fallback */}
       {filtered.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {filtered.map((p) => (

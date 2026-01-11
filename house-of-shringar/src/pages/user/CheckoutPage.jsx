@@ -1,4 +1,3 @@
-// src/pages/user/CheckoutPage.jsx
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { clearCart } from "../../store/cartSlice";
@@ -78,8 +77,8 @@ export default function CheckoutPage() {
         try {
           await saveOrderAndFinish(
             buildOrderData({
-              status: "Pending",          // ✅ NOT Paid
-              paymentStatus: "Success",   // ✅ payment info here
+              status: "Pending",         
+              paymentStatus: "Success",   
               paymentId: response.razorpay_payment_id,
             })
           );

@@ -22,7 +22,6 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-gradient-to-r from-red-900 via-red-700 to-pink-900 shadow-lg">
       <div className="w-full px-6 py-3 flex items-center justify-between">
         
-        {/* LOGO */}
         <Link
           to="/user/home"
           className="text-white text-xl font-extrabold tracking-wide"
@@ -30,7 +29,6 @@ export default function Navbar() {
           HOUSE OF SHRINGAR
         </Link>
 
-        {/* LINKS */}
         <div className="hidden md:flex gap-6">
           {navItems.map((n) => {
             const active = pathname === n.to;
@@ -51,7 +49,6 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* ACTIONS */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate("/user/cart")}

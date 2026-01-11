@@ -51,7 +51,6 @@ export default function Category() {
         {loading && <small className="text-sm text-gray-400">loading...</small>}
       </div>
 
-      {/* Add Category */}
       <div className="flex mb-3">
         <input
           type="text"
@@ -68,7 +67,6 @@ export default function Category() {
         </button>
       </div>
 
-      {/* Category List */}
       <div className="flex flex-wrap gap-2">
         {categories.map((cat) => (
           <div key={cat.id} className="bg-gray-100 px-3 py-1 rounded flex items-center gap-2">

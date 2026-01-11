@@ -1,4 +1,3 @@
-// src/pages/user/ProfilePage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUserFromDB, setUserInDB } from "../../api/dbAPI";
@@ -54,7 +53,6 @@ export default function ProfilePage() {
       };
       await setUserInDB(uid, payload);
 
-      // Update localStorage so other pages can read uid/email easily
       const newLocal = { ...storedUser, uid, email: payload.email, name: payload.name };
       localStorage.setItem("user", JSON.stringify(newLocal));
 

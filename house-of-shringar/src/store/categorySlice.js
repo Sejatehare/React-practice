@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchCategories, addCategory, deleteCategory, updateCategory } from "../api/dbAPI";
 
-// Async thunks
 export const getCategories = createAsyncThunk("categories/fetchAll", async () => await fetchCategories());
 export const createCategory = createAsyncThunk("categories/add", async (data) => await addCategory(data));
 export const removeCategory = createAsyncThunk("categories/delete", async (id) => await deleteCategory(id));

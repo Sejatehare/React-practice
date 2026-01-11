@@ -39,7 +39,7 @@ export default function AboutUs() {
       setTimeout(() => {
         setIndex((prev) => (prev + 1) % locations.length);
         setFade(true);
-      }, 500); // fade out, switch, fade in
+      }, 500); 
     }, 1500);
     return () => clearInterval(interval);
   }, [paused]);
@@ -48,7 +48,6 @@ export default function AboutUs() {
 
   return (
     <div className="font-sans text-gray-800">
-      {/* Header Image */}
       <header
         className="relative h-[70vh] w-full opacity-70 bg-cover bg-center flex items-center justify-center text-white"
         style={{
@@ -60,7 +59,6 @@ export default function AboutUs() {
         <h1 className="relative text-5xl font-bold tracking-wide">About Us</h1>
       </header>
 
-      {/* Description */}
       <section className="max-w-4xl mx-auto py-10 px-6 text-center">
         <p className="text-lg text-justify leading-relaxed text-gray-700">
           Welcome to <span className="font-semibold text-pink-600">HOUSE OF SHRINGAR</span> — where elegance meets craftsmanship. 
@@ -69,14 +67,12 @@ export default function AboutUs() {
         </p>
       </section>
 
-      {/* Locations */}
       <section
         className="flex flex-col md:flex-row items-center justify-center py-12 bg-gray-50 transition-all duration-700 ease-in-out"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-        {/* Image 50% */}
-        <div className="w-full md:w-1/2 h-[60vh] overflow-hidden">
+]        <div className="w-full md:w-1/2 h-[60vh] overflow-hidden">
           <img
             src={current.image}
             alt={current.city}
@@ -86,7 +82,6 @@ export default function AboutUs() {
           />
         </div>
 
-        {/* Text 50% */}
         <div className="w-full md:w-1/2 h-[60vh] flex flex-col items-center justify-center text-center px-6">
           <h2
             className={`text-4xl font-semibold text-gray-800 mb-4 transition-opacity duration-700 ${
@@ -113,7 +108,6 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* Contact */}
       <footer className="bg-yellow-50 text-gray-600 py-6 text-center">
         <p className="text-lg">
           📞 Contact Us: <span className="font-bold text-gray-600">+91 98765 43210</span>

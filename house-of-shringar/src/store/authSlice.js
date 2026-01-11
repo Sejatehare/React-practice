@@ -1,4 +1,3 @@
-// src/store/authSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const saved = JSON.parse(localStorage.getItem("auth") || "null");
@@ -7,7 +6,7 @@ const initialState = saved || {
   token: null,
   userId: null,
   email: null,
-  role: null, // "user" or "admin"
+  role: null,
   isAuthenticated: false,
 };
 
