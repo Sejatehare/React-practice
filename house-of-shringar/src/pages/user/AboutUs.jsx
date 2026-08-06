@@ -72,7 +72,7 @@ export default function AboutUs() {
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-]        <div className="w-full md:w-1/2 h-[60vh] overflow-hidden">
+        <div className="w-full md:w-1/2 h-[60vh] overflow-hidden">
           <img
             src={current.image}
             alt={current.city}

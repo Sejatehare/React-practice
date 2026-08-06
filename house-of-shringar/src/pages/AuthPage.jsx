@@ -1,213 +1,273 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useDispatch } from "react-redux";
-import { signup, sendPasswordReset } from "../api/authAPI";
-import { setUserInDB, getUserFromDB } from "../api/dbAPI";
-import { setAuth } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
 
+import {signup, login, sendPasswordReset} from "../api/authAPI";
+
+import {setUserInDB,getUserFromDB} from "../api/dbAPI";
+
+import { setAuth } from "../store/authSlice";
+
 export default function AuthPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
   const [loading, setLoading] = useState(false);
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const inputClass =
+    "w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none";
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
+  const buttonClass =
+    "w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition-all disabled:opacity-60";
+
+  const selectClass =
+    "border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500";
+
+  const titles = {
+    login: "Welcome Back 👋",
+    signup: "Create an Account 🚀",
+    forgot: "Reset Your Password ✉️",
+  };
+
+  const executeRequest = async (callback) => {
     setLoading(true);
+
     try {
-      const data = await signup(email, password);
-      await setUserInDB(data.localId, { email, role }, data.idToken);
-      alert("Signup successful. Please login now.");
-      setMode("login");
+      await callback();
     } catch (err) {
       console.error(err);
-      alert(err?.response?.data?.error?.message || err.message);
+
+      alert(
+        err?.response?.data?.error?.message ||
+          err.message ||
+          "Something went wrong."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogin = async (e) => {
+  const saveUser = (user) => {
+    dispatch(setAuth(user));
+    localStorage.setItem("user", JSON.stringify(user));
+  };
+
+  const handleSignup = (e) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCS78u_o-JeNbkUlxgnGzjAAE1fREGlC3c`,
-        { email, password, returnSecureToken: true }
+
+    executeRequest(async () => {
+      const data = await signup(email, password);
+
+      await setUserInDB(
+        data.localId,
+        { email, role },
+        data.idToken
       );
 
-      const { idToken, localId } = res.data;
-      const userData = await getUserFromDB(localId, idToken);
+      alert("Signup successful. Please login.");
 
-      if (!userData) {
-        alert("No user record found in database.");
-        return;
-      }
-
-      if (userData.role !== role) {
-        alert(`This account is registered as '${userData.role}', not '${role}'.`);
-        return;
-      }
-
-      dispatch(setAuth({ userId: localId, token: idToken, role: userData.role, email }));
-      localStorage.setItem("user", JSON.stringify({ userId: localId, token: idToken, role: userData.role, email }));
-
-      if (userData.role === "admin") navigate("/admin");
-      else navigate("/user");
-    } catch (error) {
-      console.error("Login failed:", error);
-      alert(error?.response?.data?.error?.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleForgot = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await sendPasswordReset(email);
-      alert("Password reset email sent. Check your inbox.");
       setMode("login");
-    } catch (err) {
-      console.error(err);
-      alert(err?.response?.data?.error?.message || err.message);
-    } finally {
-      setLoading(false);
-    }
+      setPassword("");
+    });
   };
 
-  return (
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    executeRequest(async () => {
+      const { idToken, localId } = await login(
+        email,
+        password
+      );
+
+      const user = await getUserFromDB(
+        localId,
+        idToken
+      );
+
+      if (!user) {
+        return alert("No user record found.");
+      }
+
+      if (user.role !== role) {
+        return alert(
+          `This account is registered as '${user.role}', not '${role}'.`
+        );
+      }
+
+      const authData = {
+        userId: localId,
+        token: idToken,
+        role: user.role,
+        email,
+      };
+
+      saveUser(authData);
+
+      navigate(
+        user.role === "admin"
+          ? "/admin"
+          : "/user"
+      );
+    });
+  };
+
+  const handleForgot = (e) => {
+    e.preventDefault();
+
+    executeRequest(async () => {
+      await sendPasswordReset(email);
+
+      alert(
+        "Password reset email sent successfully."
+      );
+
+      setMode("login");
+    });
+  };
+
+  const renderEmailInput = () => (
+    <input
+      type="email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      placeholder="Email"
+      className={inputClass}
+      required
+    />
+  );
+
+  const renderPasswordInput = () => (
+    <input
+      type="password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      placeholder="Password"
+      className={inputClass}
+      required
+    />
+  );
+
+  const renderRoleSelect = (label) => (
+    <div className="flex items-center justify-between">
+      <span className="text-gray-700">
+        {label}
+      </span>
+
+      <select
+        value={role}
+        onChange={(e) => setRole(e.target.value)}
+        className={selectClass}
+      >
+        <option value="user">
+          User
+        </option>
+
+        <option value="admin">
+          Admin
+        </option>
+      </select>
+    </div>
+  );
+
+  const renderButton = (
+    text,
+    loadingText
+  ) => (
+    <button
+      type="submit"
+      disabled={loading}
+      className={buttonClass}
+    >
+      {loading ? loadingText : text}
+    </button>
+  );
+
+    return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-300 via-silver-950 to-orange-100 p-4">
       <div className="w-full max-w-md card p-4 fade-up backdrop-blur-lg transition-all duration-300">
+
         <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
-          {mode === "login"
-            ? "Welcome Back 👋"
-            : mode === "signup"
-            ? "Create an Account 🚀"
-            : "Reset Your Password ✉️"}
+          {titles[mode]}
         </h1>
 
         <div className="flex justify-between mb-6">
-          {["login", "signup", "forgot"].map((m) => (
+          {[
+            {
+              value: "login",
+              label: "Login",
+            },
+            {
+              value: "signup",
+              label: "Signup",
+            },
+            {
+              value: "forgot",
+              label: "Forgot",
+            },
+          ].map(({ value, label }) => (
             <button
-              key={m}
-              onClick={() => setMode(m)}
+              key={value}
+              type="button"
+              onClick={() => setMode(value)}
               className={`w-1/3 py-2 rounded-md font-medium transition-all ${
-                mode === m
+                mode === value
                   ? "bg-indigo-600 text-white shadow-md"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
             >
-              {m === "login"
-                ? "Login"
-                : m === "signup"
-                ? "Signup"
-                : "Forgot"}
+              {label}
             </button>
           ))}
         </div>
 
         {mode === "signup" && (
-          <form onSubmit={handleSignup} className="space-y-4">
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="Email"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-            />
-            <input
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              type="password"
-              required
-              placeholder="Password"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-            />
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700">Role:</span>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition-all shadow-md"
-            >
-              {loading ? "Signing..." : "Sign Up"}
-            </button>
+          <form
+            onSubmit={handleSignup}
+            className="space-y-4"
+          >
+            {renderEmailInput()}
+            {renderPasswordInput()}
+            {renderRoleSelect("Role:")}
+            {renderButton(
+              "Sign Up",
+              "Signing..."
+            )}
           </form>
         )}
 
         {mode === "login" && (
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="Email"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-            />
-            <input
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              type="password"
-              required
-              placeholder="Password"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-            />
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700">Login as:</span>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition-all shadow-md"
-            >
-              {loading ? "Logging..." : "Login"}
-            </button>
+          <form
+            onSubmit={handleLogin}
+            className="space-y-4"
+          >
+            {renderEmailInput()}
+            {renderPasswordInput()}
+            {renderRoleSelect("Login as:")}
+            {renderButton(
+              "Login",
+              "Logging..."
+            )}
           </form>
         )}
 
         {mode === "forgot" && (
-          <form onSubmit={handleForgot} className="space-y-4">
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="Email"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition-all shadow-md"
-            >
-              {loading ? "Sending..." : "Send Reset Email"}
-            </button>
+          <form
+            onSubmit={handleForgot}
+            className="space-y-4"
+          >
+            {renderEmailInput()}
+            {renderButton(
+              "Send Reset Email",
+              "Sending..."
+            )}
           </form>
         )}
+
       </div>
     </div>
   );

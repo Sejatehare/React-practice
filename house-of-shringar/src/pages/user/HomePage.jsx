@@ -37,18 +37,7 @@ export default function HomePage() {
     (async () => {
       try {
         const cats = await fetchCategories();
-        setCategories(cats);
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      try {
         const products = await fetchProducts();
-
         const ranked = products
           .filter(p => p.rating)
           .sort((a, b) => {
@@ -58,8 +47,9 @@ export default function HomePage() {
           .slice(0, 4);
 
         setBestSellers(ranked);
+        setCategories(cats);
       } catch (err) {
-        console.error("Failed to load best sellers:", err);
+        console.error("Error fetching categories:", err);
       }
     })();
   }, []);

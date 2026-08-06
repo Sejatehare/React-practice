@@ -1,14 +1,5 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
-import Navbar from "../../components/Navbar";
+import Layout from "../../components/Layout";
 
 export default function UserLayout() {
-  return (
-    <div className="min-h-screen bg-gradient-to-r from-red-50 via-red-100 to-red-50">
-      <Navbar />
-      <main>
-        <Outlet />
-      </main>
-    </div>
-  );
+  return <Layout role="user" />;
 }

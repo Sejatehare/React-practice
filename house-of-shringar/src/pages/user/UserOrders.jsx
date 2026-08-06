@@ -2,11 +2,7 @@ import React, { useEffect, useState } from "react";
 import { onValue, ref, off } from "firebase/database";
 import { database } from "../../firebase/firebase";
 import RatingModal from "../../components/user/RatingModal";
-import {
-  fetchProducts,
-  submitProductRating,
-  markOrderItemRated,
-} from "../../api/dbAPI";
+import { fetchProducts, submitProductRating, markOrderItemRated} from "../../api/dbAPI";
 import jsPDF from "jspdf";
 
 function OrderModal({ order, onClose, productsMap, onRateClick }) {
@@ -172,21 +168,23 @@ export default function UserOrders() {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
-    (async () => {
+    const loadData = async () => {
       const prods = await fetchProducts();
+
       const map = {};
       prods.forEach((p) => (map[p.id] = p));
       setProductsMap(map);
-    })();
-  }, []);
+    };
 
-  useEffect(() => {
+    loadData();
+
     if (!uid) return;
 
     const ordersRef = ref(database, "orders");
 
-    onValue(ordersRef, (snap) => {
+    const unsubscribe = onValue(ordersRef, (snap) => {
       const data = snap.val();
+
       if (!data) {
         setOrders([]);
         return;
@@ -203,12 +201,14 @@ export default function UserOrders() {
       setOrders(list);
 
       const delivered = list.find(
-        (o) => o.status === "Delivered" &&
+        (o) =>
+          o.status === "Delivered" &&
           o.items?.some((i) => !i.rated)
       );
 
       if (delivered) {
         const item = delivered.items.find((i) => !i.rated);
+
         setSelectedProduct({
           orderId: delivered.id,
           productId: item.id,
@@ -216,7 +216,7 @@ export default function UserOrders() {
       }
     });
 
-    return () => off(ordersRef);
+    return () => unsubscribe();
   }, [uid]);
 
   const handleRatingSubmit = async (rating) => {

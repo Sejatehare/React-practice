@@ -1,0 +1,54 @@
+{
+  "platform": "CognoDB",
+  "dataset": {
+    "source": "Synthetic graph generator",
+    "nodeCount": 2000,
+    "relationshipCount": 1999
+  },
+  "loading": {
+    "nodesPerSecond": 222,
+    "relationshipsPerSecond": 221,
+    "totalWallClockMs": 9028
+  },
+  "traversals": {
+    "oneHop": {
+      "p50Ms": 385,
+      "p95Ms": 1591,
+      "averageMs": 581.4
+    },
+    "twoHop": {
+      "p50Ms": 229,
+      "p95Ms": 290,
+      "averageMs": 245.5
+    },
+    "threeHop": {
+      "p50Ms": 229,
+      "p95Ms": 378,
+      "averageMs": 259.25
+    }
+  },
+  "lookups": {
+    "pointLookup": {
+      "p50Ms": 385,
+      "p95Ms": 1591,
+      "averageMs": 581.4
+    },
+    "filteredLookup": {
+      "p50Ms": 392,
+      "p95Ms": 724,
+      "averageMs": 447.1
+    }
+  },
+  "aggregations": {
+    "countAll": {
+      "p50Ms": 233,
+      "p95Ms": 707,
+      "averageMs": 367.5
+    }
+  },
+  "footprint": {
+    "storedDataSize": "not observable",
+    "memoryUsage": "not observable"
+  },
+  "note": "This scaffold uses a synthetic graph to validate the workflow and can be extended to public datasets and multi-platform comparisons."
+}

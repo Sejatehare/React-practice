@@ -16,8 +16,7 @@ export default function ProductList() {
   const userId = user?.userId;
 
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const categoryFromQuery = queryParams.get("category");
+  const categoryFromQuery = new URLSearchParams(location.search).get("category");
 
   useEffect(() => {
     (async () => {
@@ -27,17 +26,18 @@ export default function ProductList() {
       } catch (e) {
         console.error(e);
       }
+
       try {
         const c = await fetchCategories();
         setCats(c);
       } catch (e) {
         console.error(e);
       }
-    })();
-  }, []);
 
-  useEffect(() => {
-    if (categoryFromQuery) setCat(categoryFromQuery);
+      if (categoryFromQuery) {
+        setCat(categoryFromQuery);
+      }
+    })();
   }, [categoryFromQuery]);
 
   useEffect(() => {

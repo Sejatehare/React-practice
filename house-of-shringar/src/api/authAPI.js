@@ -1,31 +1,44 @@
 import axios from "axios";
 
 const API_KEY = "AIzaSyCS78u_o-JeNbkUlxgnGzjAAE1fREGlC3c";
-const AUTH_BASE = "https://identitytoolkit.googleapis.com/v1";
 
-export async function signup(email, password) {
-  const resp = await axios.post(`${AUTH_BASE}/accounts:signUp?key=${API_KEY}`, {
+const AUTH_BASE_URL =
+  "https://identitytoolkit.googleapis.com/v1";
+
+const authRequest = async (endpoint, payload) => {
+  try {
+    const { data } = await axios.post(
+      `${AUTH_BASE_URL}/${endpoint}?key=${API_KEY}`,
+      payload
+    );
+
+    return data;
+  } catch (error) {
+    console.error(
+      "Firebase Auth Error:",
+      error.response?.data || error.message
+    );
+
+    throw error;
+  }
+};
+
+export const signup = (email, password) =>
+  authRequest("accounts:signUp", {
     email,
     password,
     returnSecureToken: true,
   });
-  return resp.data; 
-}
 
-export async function login(email, password) {
-  const resp = await axios.post(`${AUTH_BASE}/accounts:signInWithPassword?key=${API_KEY}`, {
+export const login = (email, password) =>
+  authRequest("accounts:signInWithPassword", {
     email,
     password,
     returnSecureToken: true,
   });
-  return resp.data;
-}
 
-export async function sendPasswordReset(email) {
-  const resp = await axios.post(`${AUTH_BASE}/accounts:sendOobCode?key=${API_KEY}`, {
+export const sendPasswordReset = (email) =>
+  authRequest("accounts:sendOobCode", {
     requestType: "PASSWORD_RESET",
     email,
   });
-  return resp.data;
-}
-
